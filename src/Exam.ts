@@ -92,7 +92,7 @@ export function formulaRiver() {
 }
 
 // Strips of exam paper with a formula, floating down the stream (replace the
-// bumboats). Length in tiles (1-4).
+// dragon boats). Length in tiles (1-4).
 const FORMULAS = ["√2", "e=mc²", "∫f(x)dx", "a²+b²=c²"];
 
 function formulaStrip(tiles: number): Box[] {

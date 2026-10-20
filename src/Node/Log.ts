@@ -4,7 +4,7 @@ import { formulaStrips } from "../Exam";
 import { maskBoxRows } from "../Haze";
 import { byTheme } from "../Theme";
 
-// Logs are now Singapore River bumboats, or strips of paper with
+// Logs are now dragon boats, or strips of paper with
 // a formula in exam mode, or boxes of N95 masks in haze mode
 // (keys 0-3 = 1 to 4 tiles long).
 export default class Log extends Generic {

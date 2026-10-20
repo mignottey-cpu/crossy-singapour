@@ -40,7 +40,7 @@ export function murkyRiver() {
   return voxelModel(boxes, { castShadow: false, receiveShadow: true });
 }
 
-// Rows of N95 mask boxes floating down the river (replace the bumboats).
+// Rows of N95 mask boxes floating down the river (replace the dragon boats).
 function maskBox(cx: number): Box[] {
   return [
     [cx - 7, 2, -4, 14, 3.5, 8, 0xfafafa],

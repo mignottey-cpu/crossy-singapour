@@ -25,9 +25,6 @@ const C = {
   lanternRed: 0xd7261e,
   window: 0x2d4a6b,
   roofTile: 0xb5482b,
-  boatHull: 0x8b2e1a,
-  boatTrim: 0xf2c230,
-  boatDeck: 0xc08a55,
   gold: 0xf2c230,
   white: 0xffffff,
 };
@@ -334,6 +331,47 @@ function shophouse(color: number): Box[] {
   ];
 }
 
+// CapitaSpring (BIG and Carlo Ratti): a glass tower wrapped in vertical
+// fins that open up at the base, around the "Green Oasis" garden a third of
+// the way up, and on the roof garden. Faces -z.
+function capitaSpring(): Box[] {
+  const H = 46;
+  const glass = 0x4e6d82;
+  const fin = 0xe8ecef;
+  const green = [0x2e7d32, 0x43a047, 0x66bb6a];
+  const boxes: Box[] = [
+    [-5, 4, -3.5, 10, 12, 7, glass], // offices
+    [-1.5, 16, -1.5, 3, 6, 3, 0x9e9e9e], // core through the Green Oasis
+    [-5, 22, -3.5, 10, H - 22, 7, glass], // offices and apartments
+    [-1.5, 0, -1.5, 3, 4, 3, 0x9e9e9e], // lobby core
+    [-5, H, -3.5, 10, 0.6, 7, 0x8d6e63], // roof garden
+  ];
+  // gardens: at the foot, in the Green Oasis and on the roof
+  for (let i = 0; i < 6; i++) {
+    const x = -4.5 + (i % 3) * 3;
+    const z = i < 3 ? -3 : 0.5;
+    boxes.push([x, 16, z, 2.6, 1 + (i % 3), 2.6, green[i % 3]]);
+    boxes.push([x, 18.5 + (i % 2), z, 2.4, 1.5, 2.4, green[(i + 1) % 3]]);
+    boxes.push([x + 0.3, H + 0.6, z + 0.3, 2, 1 + (i % 2), 2, green[i % 3]]);
+  }
+  boxes.push([-4.5, 0, -3.4, 3, 2.5, 2, green[1]], [1.5, 0, -3.4, 3, 2, 2, green[0]]);
+  // vertical fins on the front and back, pulled apart around the gardens
+  for (let x = -4.9; x <= 4.4; x += 1.55) {
+    const central = x > -2.2 && x < 1.8;
+    for (const z of [-3.85, 3.5]) {
+      if (central) {
+        boxes.push([x, 4, z, 0.4, 12, 0.35, fin], [x, 22, z, 0.4, H - 22, 0.35, fin]);
+      } else {
+        boxes.push([x, 0, z, 0.4, H, 0.35, fin]);
+      }
+    }
+  }
+  for (let z = -3.2; z <= 2.8; z += 1.5) {
+    boxes.push([-5.35, 0, z, 0.35, H, 0.4, fin], [5, 0, z, 0.35, H, 0.4, fin]); // side fins
+  }
+  return boxes;
+}
+
 // Generic glass skyscraper of the CBD (Raffles Place), with a stepped top.
 function cbdTower(glass: number, H: number): Box[] {
   const boxes: Box[] = [
@@ -352,7 +390,7 @@ export const buildings = () =>
     esplanade(),
     singaporeFlyer(),
     pinnacleDuxton(),
-    hdbBlock(HDB_COLORS[0]),
+    capitaSpring(),
     hdbBlock(HDB_COLORS[1]),
     shophouse(SHOPHOUSE_COLORS[0]),
     shophouse(SHOPHOUSE_COLORS[2]),
@@ -361,28 +399,58 @@ export const buildings = () =>
 
 // ---------- River (replace the logs and lily pads) ----------
 
-// Bumboat from the Singapore River, length in tiles (1-4).
-function bumboat(tiles: number): Box[] {
+// Dragon boat, like at the Dragon Boat Festival races: long narrow hull
+// painted with scales, a dragon head at the front and its tail at the back,
+// a drummer, paddlers and a steersman. Length in tiles (1-4), head on +x.
+function dragonBoat(tiles: number): Box[] {
   const L = tiles === 4 ? 62 : tiles * 16;
   const x0 = -L / 2;
-  return [
-    [x0 + 1, 0, -2, L - 2, 4, 6, C.boatHull],
-    [x0, 2, -2, 1, 4, 6, C.boatHull], // raised stern
-    [x0 + L - 1, 2, -2, 1, 4, 6, C.boatHull], // raised bow
-    [x0 + 1, 4, -2, L - 2, 1, 1, C.boatTrim],
-    [x0 + 1, 4, 3, L - 2, 1, 1, C.boatTrim],
-    [x0 + 1, 3, -1, L - 2, 1, 4, C.boatDeck],
-    // painted eyes on the bow, like real bumboats
-    [x0 + L - 4, 2, -3, 2, 2, 1, C.white],
-    [x0 + L - 3, 2, -3, 1, 1, 1, C.eye],
-    [x0 + L - 4, 2, 4, 2, 2, 1, C.white],
-    [x0 + L - 3, 2, 4, 1, 1, 1, C.eye],
+  const red = 0xc62828;
+  const gold = 0xf2c230;
+  const green = 0x2e7d32;
+  const boxes: Box[] = [
+    [x0 + 2, 0, -2.5, L - 4, 3, 5, red], // hull
+    [x0 + 2, 3, -2.6, L - 4, 0.5, 5.2, gold], // gunwale
+    [x0 + 2.5, 3, -1.5, L - 5, 0.3, 3, 0x8d6e63], // seats
+    // dragon head with its mane, eyes and open jaw
+    [x0 + L - 3, 1, -1.5, 3, 6, 3, green],
+    [x0 + L - 1, 5, -1.2, 2, 1.5, 2.4, green], // snout
+    [x0 + L - 1, 3.6, -1, 1.8, 0.8, 2, red], // jaw
+    [x0 + L - 3.2, 6, -1.8, 1.6, 2, 3.6, gold], // mane
+    [x0 + L - 1.5, 6, -1.6, 0.8, 0.8, 0.4, 0xffffff], // eyes
+    [x0 + L - 1.5, 6, 1.2, 0.8, 0.8, 0.4, 0xffffff],
+    [x0 + L - 1.2, 6.2, -1.7, 0.4, 0.4, 0.3, 0x111111],
+    [x0 + L - 1.2, 6.2, 1.4, 0.4, 0.4, 0.3, 0x111111],
+    // curled tail
+    [x0, 1, -1, 2, 5, 2, green],
+    [x0 - 0.5, 6, -0.8, 2, 1.5, 1.6, gold],
   ];
+  // scales painted along both sides
+  for (let x = x0 + 3; x < x0 + L - 4; x += 2) {
+    boxes.push([x, 1.2, -2.7, 1, 1, 0.3, gold], [x + 1, 0.4, 2.4, 1, 1, 0.3, gold]);
+  }
+  // drummer near the head, steersman at the tail, paddlers in pairs
+  boxes.push([x0 + L - 6, 3, -1, 2, 1.5, 2, 0xd7261e]); // drum
+  boxes.push([x0 + L - 8.5, 3, -0.6, 1.4, 3, 1.2, 0xffd600]);
+  boxes.push([x0 + 3, 3, -0.6, 1.4, 3.5, 1.2, 0x1565c0]);
+  for (let x = x0 + 6; x < x0 + L - 10; x += 4) {
+    for (const z of [-2, 1]) {
+      boxes.push([x, 3, z, 1.4, 2.5, 1, 0xffd600]); // paddler
+      boxes.push([x - 0.5, 1.5, z < 0 ? -3.6 : 2.6, 0.4, 2.5, 1, 0x8d6e63]); // paddle
+    }
+  }
+  return boxes;
 }
+
+// Lifted so the hull floats above the water surface, like the logs did.
+const FLOAT = 3;
 
 export const boats = () =>
   [1, 2, 3, 4].map((t) =>
-    voxelModel(bumboat(t), { castShadow: true, receiveShadow: true })
+    voxelModel(
+      dragonBoat(t).map(([x, y, z, w, h, d, c]): Box => [x, y + FLOAT, z, w, h, d, c]),
+      { castShadow: true, receiveShadow: true }
+    )
   );
 
 // Little raft flying the Singapore flag (red over white, crescent and five
