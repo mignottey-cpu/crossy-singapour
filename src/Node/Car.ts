@@ -2,7 +2,8 @@ import Generic from './Generic';
 import { vehicles as singaporeVehicles } from '../Singapore';
 import { voxelModel } from '../Voxel';
 import { examVehicles } from '../Exam';
-import { isExam } from '../Theme';
+import { hazeVehicles } from '../Haze';
+import { byTheme } from '../Theme';
 
 const cars = [
   'police_car',
@@ -19,7 +20,11 @@ const cars = [
 export default class Car extends Generic {
   setup = async () => {
     const { vehicles } = this.globalModels;
-    const builtVehicles = isExam() ? examVehicles : singaporeVehicles;
+    const builtVehicles = byTheme({
+      singapore: singaporeVehicles,
+      exam: examVehicles,
+      haze: hazeVehicles,
+    });
 
     for (let index in cars) {
       let car = cars[index];

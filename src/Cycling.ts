@@ -74,7 +74,9 @@ const SKINS = [0xf0c8a0, 0xd9a066, 0x8d5524];
 const BASE = 1.6; // the path is a bit higher than the train's ground level
 
 // A road cyclist riding towards +x, centred on (b, z).
-function cyclist(b: number, z: number, kit: Kit, skin: number): Box[] {
+function cyclist(
+  b: number, z: number, kit: Kit, skin: number, masked = false
+): Box[] {
   const y = BASE;
   const wheel = (cx: number): Box[] => [
     [cx - 2.5, y + 1, z - 0.2, 5, 3, 0.4, 0x1a1a1a],
@@ -108,6 +110,8 @@ function cyclist(b: number, z: number, kit: Kit, skin: number): Box[] {
     [b + 2.6, y + 7.8, z - 0.9, 1.8, 1.8, 1.8, skin],
     [b + 2.2, y + 9.3, z - 1.1, 2.6, 0.9, 2.2, kit.helmet],
     [b + 4.3, y + 8.6, z - 0.8, 0.2, 0.5, 1.6, 0x111111],
+    // N95 mask during the haze
+    ...(masked ? ([[b + 4.3, y + 7.7, z - 0.8, 0.5, 1, 1.6, 0xf5f5f5]] as Box[]) : []),
   ];
 }
 
@@ -139,13 +143,13 @@ const LANES = [-6, -1.5];
 const pick = <T>(list: T[], i: number) => list[i % list.length];
 
 // A bunch of riders two abreast; `offset` varies the team colours per piece.
-function bunch(xs: number[], offset: number): Box[] {
+function bunch(xs: number[], offset: number, masked = false): Box[] {
   const boxes: Box[] = [];
   xs.forEach((x, i) => {
     LANES.forEach((z, lane) => {
       const kit = pick(KITS, i + lane * 2 + offset);
       const skin = pick(SKINS, i * 2 + lane + offset);
-      boxes.push(...cyclist(x + lane * 7, z, kit, skin));
+      boxes.push(...cyclist(x + lane * 7, z, kit, skin, masked));
     });
   });
   return boxes;
@@ -153,12 +157,13 @@ function bunch(xs: number[], offset: number): Box[] {
 
 // The train is built from pieces laid out along +x and moves towards +x:
 // "front" is at the tail, "back" leads the way.
-export const pelotonPieces = () => ({
-  front: voxelModel([...teamCar(-20, -3.75), ...bunch([4, 18, 32], 0)]),
-  middle: voxelModel(bunch([-28, -14, 0, 14, 28], 1)),
+// With `masked`, the riders wear N95 masks (haze mode).
+export const pelotonPieces = (masked = false) => ({
+  front: voxelModel([...teamCar(-20, -3.75), ...bunch([4, 18, 32], 0, masked)]),
+  middle: voxelModel(bunch([-28, -14, 0, 14, 28], 1, masked)),
   back: voxelModel([
-    ...bunch([-30, -16], 3),
-    ...cyclist(6, -3.75, LEADER, SKINS[0]), // yellow jersey breaking away
+    ...bunch([-30, -16], 3, masked),
+    ...cyclist(6, -3.75, LEADER, SKINS[0], masked), // yellow jersey breaking away
   ]),
 });
 

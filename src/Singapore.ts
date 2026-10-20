@@ -130,7 +130,7 @@ export const trees = () => [
 
 // ---------- Small obstacles (replace the boulders) ----------
 
-function merlion(): Box[] {
+export function merlion(): Box[] {
   return [
     [-4, 0, -3, 8, 3, 7, C.stone],
     // fish body
@@ -652,13 +652,17 @@ export const vehicles = {
 // Big grey granite slabs; on some rows timber decking takes over on one side,
 // like along the waterfront. The row is 25 tiles wide, top at y = 6.
 
-const GRANITE = [0xd5d2cb, 0xc9c5bd, 0xdcd9d2];
-const TIMBER = [0xa47148, 0x8f5f3a];
+export const PROMENADE_COLORS = {
+  base: 0xbdb8ae,
+  granite: [0xd5d2cb, 0xc9c5bd, 0xdcd9d2],
+  timber: [0xa47148, 0x8f5f3a],
+};
 
-export function promenade(variant: number) {
+export function promenadeBoxes(variant: number, colors = PROMENADE_COLORS): Box[] {
+  const { granite: GRANITE, timber: TIMBER } = colors;
   const H = 6;
   const HALF = 200;
-  const boxes: Box[] = [[-HALF, 0, -8, HALF * 2, H - 0.1, 16, 0xbdb8ae]];
+  const boxes: Box[] = [[-HALF, 0, -8, HALF * 2, H - 0.1, 16, colors.base]];
   const slab = 32; // a slab is 2 tiles long
   const deck = variant === 1;
   const graniteDepth = deck ? 9 : 16;
@@ -676,8 +680,11 @@ export function promenade(variant: number) {
     }
     boxes.push([-HALF, H - 0.25, 0.8, HALF * 2, 0.25, 0.3, 0x7a7a7a]); // steel edge
   }
-  return voxelModel(boxes, { castShadow: false, receiveShadow: true });
+  return boxes;
 }
+
+export const promenade = (variant: number) =>
+  voxelModel(promenadeBoxes(variant), { castShadow: false, receiveShadow: true });
 
 // ---------- MacBooks floating on the water (replace the lily pads) ----------
 // Open laptop: aluminium unibody, black keyboard, display with the notch.

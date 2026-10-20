@@ -1,4 +1,5 @@
 import { Dimensions } from "react-native";
+import { Fog } from "three";
 
 import { swipeDirections } from "@/components/GestureView";
 import AudioManager from "./AudioManager";
@@ -10,6 +11,8 @@ import {
   CrossyScene,
 } from "./CrossyGame";
 import CrossyPlayer from "./CrossyPlayer";
+import { HAZE_COLOR } from "./Haze";
+import { isHaze } from "./Theme";
 import {
   CAMERA_EASING,
   DEBUG_CAMERA_CONTROLS,
@@ -36,6 +39,16 @@ export default class Engine {
 
   setupGame = (character) => {
     this.scene = new CrossyScene({});
+
+    if (isHaze()) {
+      // Smog: the level fades into a yellow-grey haze under a dim, warm sun.
+      this.scene.fog = new Fog(HAZE_COLOR, 3, 11);
+      this.scene.light.color.set(0xffd9a0);
+      this.scene.light.intensity = 0.6;
+    }
+    if (this.renderer) {
+      this.renderer.setClearColor(isHaze() ? HAZE_COLOR : sceneColor);
+    }
 
     this.camera = new CrossyCamera();
 
@@ -373,7 +386,7 @@ export default class Engine {
       antialias: true,
       width,
       height,
-      clearColor: sceneColor,
+      clearColor: isHaze() ? HAZE_COLOR : sceneColor,
     });
 
     this.unpause();

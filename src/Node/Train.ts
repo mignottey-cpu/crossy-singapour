@@ -3,7 +3,7 @@ import { Box3, Group } from "three";
 import Generic from "./Generic";
 import { pelotonPieces } from "../Cycling";
 import { studentRushPieces } from "../Exam";
-import { isExam } from "../Theme";
+import { isExam, isHaze } from "../Theme";
 
 export default class Train extends Generic {
   getDepth = (mesh) => {
@@ -39,9 +39,9 @@ export default class Train extends Generic {
   };
 
   // The train is now a peloton of cyclists (see Cycling.ts), or students in
-  // suits rushing to the exam in exam mode.
+  // suits rushing to the exam in exam mode (riders wear masks in haze mode).
   setup = async () => {
-    this.models = isExam() ? studentRushPieces() : pelotonPieces();
+    this.models = isExam() ? studentRushPieces() : pelotonPieces(isHaze());
     return this.models;
   };
 }

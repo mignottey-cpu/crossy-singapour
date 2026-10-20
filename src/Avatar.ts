@@ -3,7 +3,8 @@ import { Box, voxelModel } from "./Voxel";
 // Player character built from photos: messy dark-brown hair with a middle part,
 // thick eyebrows, light-blue linen shirt, blue/white striped trousers,
 // tan suede clogs and a black tote bag; in exam mode, a navy suit and a
-// briefcase. Front faces +z (walking direction).
+// briefcase; in haze mode, a protective coverall and an N95 mask.
+// Front faces +z (walking direction).
 // The model is rescaled to 1 tile tall by CrossyPlayer, so units are arbitrary.
 
 const C = {
@@ -29,6 +30,10 @@ const C = {
   shoe: 0x111111,
   briefcase: 0x6d4c41,
   briefcaseDark: 0x3e2723,
+  coverall: 0xf4f6f7,
+  seam: 0xc9ced3,
+  glove: 0x3f6fd8,
+  strap2: 0x4f83cc,
 };
 
 const F = 3.5; // front of the head (z)
@@ -101,9 +106,41 @@ function suitOutfit(): Box[] {
   ];
 }
 
-function me(outfit: "beach" | "suit"): Box[] {
+// Haze outfit: white protective coverall (hood down, zip, taped seams),
+// blue nitrile gloves and overshoes. The N95 mask is added on the face.
+function hazmatOutfit(): Box[] {
+  return [
+    [-3, 0, -1, 2, 1.5, 4, C.glove], // overshoes
+    [1, 0, -1, 2, 1.5, 4, C.glove],
+    [-3, 1.5, 0, 2, 3.8, 2, C.coverall], // legs
+    [1, 1.5, 0, 2, 3.8, 2, C.coverall],
+    [-3, 5, -0.5, 6, 5, 2.5, C.coverall], // body
+    [-0.2, 5.2, 2, 0.4, 4.8, 0.15, C.seam], // zip
+    [-3, 6.2, 2, 6, 0.25, 0.15, C.seam], // taped seams
+    [-3.6, 9.4, -1.6, 7.2, 1.6, 2.4, C.coverall], // hood down behind the neck
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, C.coverall], // sleeves
+    [-4.5, 4.4, -0.25, 1.5, 1.4, 2, C.glove],
+    [3, 5.8, -0.25, 1.5, 4.2, 2, C.coverall],
+    [3, 4.4, -0.25, 1.5, 1.4, 2, C.glove],
+  ];
+}
+
+// N95 mask over the nose and mouth, with its straps going round the head.
+const n95Mask: Box[] = [
+  [-2.3, 11.4, F - 0.1, 4.6, 2.5, 0.9, 0xf5f5f5],
+  [-1.6, 11.7, F + 0.8, 3.2, 1.8, 0.3, 0xf5f5f5], // cup
+  [-0.4, 12.2, F + 1.1, 0.8, 0.8, 0.2, 0xd0d0d0], // valve
+  [-3.6, 12.6, -2.6, 0.2, 0.4, 6.2, C.strap2],
+  [3.4, 12.6, -2.6, 0.2, 0.4, 6.2, C.strap2],
+];
+
+type Outfit = "beach" | "suit" | "hazmat";
+
+function me(outfit: Outfit): Box[] {
+  const clothes =
+    outfit === "suit" ? suitOutfit() : outfit === "hazmat" ? hazmatOutfit() : beachOutfit();
   const boxes: Box[] = [
-    ...(outfit === "suit" ? suitOutfit() : beachOutfit()),
+    ...clothes,
     // neck
     [-1, 10, 0, 2, 1, 2, C.skin],
     // head
@@ -136,8 +173,9 @@ function me(outfit: "beach" | "suit"): Box[] {
     [-2, 18.5, 2.5, 2, 1, 1.5, C.hairLight],
   ];
 
+  if (outfit === "hazmat") boxes.push(...n95Mask);
   return boxes;
 }
 
-export const avatar = (outfit: "beach" | "suit" = "beach") =>
+export const avatar = (outfit: Outfit = "beach") =>
   voxelModel(me(outfit), { castShadow: true, receiveShadow: true });

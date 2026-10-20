@@ -13,7 +13,7 @@ import Colors from "@/Colors";
 import Images from "@/Images";
 import ModelLoader from "@/ModelLoader";
 import State from "@/state";
-import { getTheme, setTheme } from "@/Theme";
+import { getTheme, setTheme, Theme } from "@/Theme";
 import Button from "../Button";
 
 async function shareAsync() {
@@ -42,17 +42,27 @@ export default function Footer({
 }) {
   const [canShare, setCanShare] = useState(true);
   const [switching, setSwitching] = useState(false);
-  const exam = getTheme() === "exam";
+  const theme = getTheme();
 
-  // Switches between the Singapore and exam looks, then starts a new level.
+  // Switches to another look (or back to Singapore), then starts a new level.
   // Only the models change, so the gameplay stays exactly the same.
-  const toggleMode = async () => {
+  const toggleMode = async (mode: Theme) => {
     if (switching) return;
     setSwitching(true);
-    await setTheme(exam ? "singapore" : "exam");
+    await setTheme(theme === mode ? "singapore" : mode);
     await ModelLoader.loadModels();
     setGameState(State.Game.none);
   };
+
+  const modeButton = (mode: Theme, label: string) => (
+    <Pressable onPress={() => toggleMode(mode)} style={styles.modeButton}>
+      <View style={styles.modeInner}>
+        <Text style={styles.modeText} numberOfLines={1}>
+          {switching ? "..." : theme === mode ? "MODE SG" : label}
+        </Text>
+      </View>
+    </Pressable>
+  );
 
   useEffect(() => {
     isAvailableAsync()
@@ -64,13 +74,7 @@ export default function Footer({
 
   return (
     <View style={[styles.container, style]}>
-      <Pressable onPress={toggleMode} style={styles.modeButton}>
-        <View style={styles.modeInner}>
-          <Text style={styles.modeText} numberOfLines={1}>
-            {switching ? "..." : exam ? "MODE SG" : "MODE EXAM"}
-          </Text>
-        </View>
-      </Pressable>
+      {modeButton("exam", "MODE EXAM")}
       {canShare && (
         <Button
           onPress={shareAsync}
@@ -88,8 +92,7 @@ export default function Footer({
         ]}
         source={Images.button.long_play}
       />
-      {/* keeps the play button centred now that the leaderboard is gone */}
-      <View style={styles.spacer} />
+      {modeButton("haze", "MODE HAZE")}
     </View>
   );
 }
@@ -128,8 +131,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "white",
     textAlign: "center",
-  },
-  spacer: {
-    width: 140,
   },
 });
