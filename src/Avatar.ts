@@ -3,7 +3,8 @@ import { Box, voxelModel } from "./Voxel";
 // Player character built from photos: messy dark-brown hair with a middle part,
 // thick eyebrows, light-blue linen shirt, blue/white striped trousers,
 // tan suede clogs and a black tote bag; in exam mode, a navy suit and a
-// briefcase; in haze mode, a protective coverall and an N95 mask.
+// briefcase; in haze mode, a protective coverall and an N95 mask; plus the
+// skins sold in the shop (unicorn, emo, nerd, rich).
 // Front faces +z (walking direction).
 // The model is rescaled to 1 tile tall by CrossyPlayer, so units are arbitrary.
 
@@ -125,6 +126,125 @@ function hazmatOutfit(): Box[] {
   ];
 }
 
+// Unicorn onesie: pastel pink with a white belly, rainbow mane down the back,
+// a little tail and pink slippers. The golden horn is added on the head.
+const RAINBOW = [0xe53935, 0xff9800, 0xffeb3b, 0x43a047, 0x1e88e5, 0x8e24aa];
+
+function unicornOutfit(): Box[] {
+  const pink = 0xf8bbd9;
+  const boxes: Box[] = [
+    [-3, 0, -1, 2, 1.5, 4, 0xec407a], // slippers
+    [1, 0, -1, 2, 1.5, 4, 0xec407a],
+    [-3, 1.5, 0, 2, 3.8, 2, pink], // legs
+    [1, 1.5, 0, 2, 3.8, 2, pink],
+    [-3, 5, -0.5, 6, 5, 2.5, pink], // body
+    [-1.8, 5.4, 2, 3.6, 4, 0.2, 0xffffff], // belly
+    [-3.6, 9.4, -1.6, 7.2, 1.6, 2.4, pink], // hood down
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, pink], // sleeves
+    [-4.5, 4.6, -0.25, 1.5, 1.2, 2, C.skin],
+    [3, 5.8, -0.25, 1.5, 4.2, 2, pink],
+    [3, 4.6, -0.25, 1.5, 1.2, 2, C.skin],
+  ];
+  RAINBOW.forEach((color, i) => {
+    boxes.push([-0.6, 10.6 - i * 1.1, -2.6, 1.2, 1.1, 0.6, color]); // mane
+    boxes.push([-0.5 + (i % 2) * 0.3, 2.5 + i * 0.5, -1.6 - i * 0.35, 1, 0.5, 0.5, color]); // tail
+  });
+  return boxes;
+}
+
+// Emo: black hoodie with a skull, skinny black jeans, studded belt,
+// checkered shoes and striped wristbands. Hair dyed black with a long fringe.
+function emoOutfit(): Box[] {
+  const black = 0x1b1b1b;
+  const boxes: Box[] = [
+    [-3, 1, 0, 2, 4.2, 2, 0x262626], // skinny jeans
+    [1, 1, 0, 2, 4.2, 2, 0x262626],
+    [-3, 5, -0.5, 6, 0.5, 2.5, 0x111111], // studded belt
+    [-3, 5.5, -0.5, 6, 4.5, 2.5, black], // hoodie
+    [-1, 7, 2, 2, 1.8, 0.2, 0xeeeeee], // skull
+    [-0.7, 7.6, 2.1, 0.5, 0.5, 0.2, black],
+    [0.2, 7.6, 2.1, 0.5, 0.5, 0.2, black],
+    [-3.6, 9.4, -1.6, 7.2, 1.6, 2.4, black], // hood down
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, black],
+    [-4.5, 4.6, -0.25, 1.5, 0.6, 2, 0xd81b60], // wristbands
+    [-4.5, 4, -0.25, 1.5, 0.6, 2, C.skin],
+    [3, 5.8, -0.25, 1.5, 4.2, 2, black],
+    [3, 4.6, -0.25, 1.5, 0.6, 2, 0xd81b60],
+    [3, 4, -0.25, 1.5, 0.6, 2, C.skin],
+  ];
+  for (const x of [-2.6, -1.4, 0, 1.2, 2.4]) {
+    boxes.push([x, 5.15, 2.05, 0.3, 0.3, 0.1, 0xc0c0c0]); // studs
+  }
+  for (const x0 of [-3, 1]) {
+    for (let i = 0; i < 4; i++) {
+      boxes.push([x0 + (i % 2), 0, -1 + Math.floor(i / 2) * 2, 1, 1, 2, i % 3 ? 0xffffff : 0x111111]); // checkered shoes
+    }
+  }
+  return boxes;
+}
+
+// Nerd: white shirt, argyle sweater vest, red bow tie, khaki trousers,
+// white socks and loafers, pens in the pocket and a book under the arm.
+// The thick glasses are added on the face.
+function nerdOutfit(): Box[] {
+  const vest = 0x283593;
+  const boxes: Box[] = [
+    [-3, 0, -1, 2, 1, 4, 0x5d4037], // loafers
+    [1, 0, -1, 2, 1, 4, 0x5d4037],
+    [-3, 1, 0, 2, 1, 2, 0xffffff], // socks
+    [1, 1, 0, 2, 1, 2, 0xffffff],
+    [-3, 2, 0, 2, 3.5, 2, 0xc8b48a], // khakis
+    [1, 2, 0, 2, 3.5, 2, 0xc8b48a],
+    [-3, 5, -0.5, 6, 5, 2.5, 0xffffff], // shirt
+    [-2.8, 5.2, -0.6, 5.6, 4, 2.7, vest], // sweater vest
+    [-0.8, 9.3, 2.1, 1.6, 0.7, 0.3, 0xd32f2f], // bow tie
+    [-2, 9.8, 1.8, 1, 0.6, 0.5, 0xffffff], // collar
+    [1, 9.8, 1.8, 1, 0.6, 0.5, 0xffffff],
+    [1.2, 7.5, 2.15, 0.25, 1.2, 0.2, 0x1e88e5], // pens
+    [1.7, 7.5, 2.15, 0.25, 1.2, 0.2, 0xd32f2f],
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, 0xffffff], // sleeves
+    [-4.5, 4.6, -0.25, 1.5, 1.2, 2, C.skin],
+    [3, 5.8, -0.25, 1.5, 4.2, 2, 0xffffff],
+    [3, 4.6, -0.25, 1.5, 1.2, 2, C.skin],
+    [4.5, 4.5, -1.5, 1, 4.5, 3.5, 0x1565c0], // book
+  ];
+  // argyle diamonds on the vest
+  for (const [x, y, c] of [[-2, 6, 0xffeb3b], [0.2, 7.5, 0xd32f2f], [-1, 8.2, 0xffeb3b], [1.4, 5.8, 0xd32f2f]] as const) {
+    boxes.push([x, y, 2.1, 0.8, 0.8, 0.15, c]);
+  }
+  return boxes;
+}
+
+// Rich: cream linen suit, gold chain and watch, brown loafers and a wad of
+// cash in the hand. Gold-framed sunglasses are added on the face.
+function richOutfit(): Box[] {
+  const cream = 0xf3ead7;
+  const gold = 0xf2c230;
+  const boxes: Box[] = [
+    [-3, 0, -1, 2, 1, 4, 0x6d4c41], // loafers
+    [1, 0, -1, 2, 1, 4, 0x6d4c41],
+    [-3, 1, 0, 2, 4.5, 2, cream], // trousers
+    [1, 1, 0, 2, 4.5, 2, cream],
+    [-3, 5, -0.5, 6, 5, 2.5, cream], // jacket
+    [-1, 6.5, 2, 2, 3.5, 0.2, 0x90caf9], // open shirt
+    [-0.5, 7.5, 2.1, 1, 2.5, 0.2, C.skin],
+    [-1.6, 6.5, 2.05, 0.6, 3.5, 0.2, 0xe6dcc5], // lapels
+    [1, 6.5, 2.05, 0.6, 3.5, 0.2, 0xe6dcc5],
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, cream],
+    [-4.5, 4.5, -0.25, 1.5, 1.3, 2, C.skin],
+    [-4.6, 5.6, -0.3, 1.7, 0.5, 2.1, gold], // watch
+    [3, 5.8, -0.25, 1.5, 4.2, 2, cream],
+    [3, 4.5, -0.25, 1.5, 1.3, 2, C.skin],
+    [4.4, 3.5, -0.2, 0.8, 1.5, 2.6, 0x2e7d32], // wad of cash
+    [4.35, 4, -0.25, 0.9, 0.4, 2.7, 0xffffff],
+  ];
+  // thick gold chain
+  for (const [x, y] of [[-1.6, 9.6], [-1.2, 8.8], [-0.6, 8.3], [0.2, 8.3], [0.8, 8.8], [1.2, 9.6]]) {
+    boxes.push([x, y, 2.15, 0.6, 0.6, 0.3, gold]);
+  }
+  return boxes;
+}
+
 // N95 mask over the nose and mouth, with its straps going round the head.
 const n95Mask: Box[] = [
   [-2.3, 11.4, F - 0.1, 4.6, 2.5, 0.9, 0xf5f5f5],
@@ -134,11 +254,54 @@ const n95Mask: Box[] = [
   [3.4, 12.6, -2.6, 0.2, 0.4, 6.2, C.strap2],
 ];
 
-type Outfit = "beach" | "suit" | "hazmat";
+// Golden spiral horn on top of the hair.
+const unicornHorn: Box[] = [
+  [-0.8, 19.3, 0.2, 1.6, 1.4, 1.6, 0xf2c230],
+  [-0.6, 20.7, 0.4, 1.2, 1.4, 1.2, 0xffe082],
+  [-0.4, 22.1, 0.6, 0.8, 1.2, 0.8, 0xf2c230],
+  [-0.2, 23.3, 0.8, 0.4, 0.8, 0.4, 0xffe082],
+  [-3.9, 17.5, 0.5, 1, 1.5, 1, 0xf8bbd9], // ears
+  [2.9, 17.5, 0.5, 1, 1.5, 1, 0xf8bbd9],
+];
+
+// Thick black glasses.
+const nerdGlasses: Box[] = [
+  [-3, 13.1, F + 0.25, 2.3, 1.6, 0.25, 0x111111],
+  [0.7, 13.1, F + 0.25, 2.3, 1.6, 0.25, 0x111111],
+  [-2.7, 13.4, F + 0.5, 1.7, 1, 0.1, 0xd6eef5],
+  [1, 13.4, F + 0.5, 1.7, 1, 0.1, 0xd6eef5],
+  [-0.7, 13.9, F + 0.25, 1.4, 0.3, 0.25, 0x111111],
+];
+
+// Aviator sunglasses with a gold frame.
+const sunglasses: Box[] = [
+  [-3.1, 13.1, F + 0.25, 2.5, 1.5, 0.3, 0x1a1a1a],
+  [0.6, 13.1, F + 0.25, 2.5, 1.5, 0.3, 0x1a1a1a],
+  [-0.6, 14.2, F + 0.25, 1.2, 0.3, 0.3, 0xf2c230],
+  [-3.2, 14.5, F + 0.25, 6.4, 0.25, 0.3, 0xf2c230],
+];
+
+// Long black fringe sweeping over one eye.
+const emoFringe: Box[] = [
+  [-0.2, 12.9, F + 0.05, 4.2, 3.6, 0.7, 0x111111],
+  [2.4, 11.8, F + 0.05, 1.6, 1.2, 0.7, 0x111111],
+  [-4, 16.4, -2, 0.6, 1.5, 3, 0x6a1b9a], // purple streak
+];
+
+export type Outfit = "beach" | "suit" | "hazmat" | "unicorn" | "emo" | "nerd" | "rich";
+
+const OUTFITS: Record<Outfit, () => Box[]> = {
+  beach: beachOutfit,
+  suit: suitOutfit,
+  hazmat: hazmatOutfit,
+  unicorn: unicornOutfit,
+  emo: emoOutfit,
+  nerd: nerdOutfit,
+  rich: richOutfit,
+};
 
 function me(outfit: Outfit): Box[] {
-  const clothes =
-    outfit === "suit" ? suitOutfit() : outfit === "hazmat" ? hazmatOutfit() : beachOutfit();
+  const clothes = OUTFITS[outfit]();
   const boxes: Box[] = [
     ...clothes,
     // neck
@@ -174,6 +337,16 @@ function me(outfit: Outfit): Box[] {
   ];
 
   if (outfit === "hazmat") boxes.push(...n95Mask);
+  if (outfit === "unicorn") boxes.push(...unicornHorn);
+  if (outfit === "nerd") boxes.push(...nerdGlasses);
+  if (outfit === "rich") boxes.push(...sunglasses);
+  if (outfit === "emo") {
+    boxes.push(...emoFringe);
+    // hair dyed black
+    return boxes.map(([x, y, z, w, h, d, c]): Box => [
+      x, y, z, w, h, d, c === C.hair || c === C.hairLight ? 0x151515 : c,
+    ]);
+  }
   return boxes;
 }
 

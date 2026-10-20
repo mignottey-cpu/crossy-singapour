@@ -15,6 +15,7 @@ import AudioManager from "./AudioManager";
 import { MAP_OFFSET, maxRows, startingRow } from "./GameSettings";
 import Feathers from "./Particles/Feathers";
 import Water from "./Particles/Water";
+import ModelLoader from "./ModelLoader";
 import Rows from "./Row";
 import { Fill } from "./Row/Grass";
 
@@ -200,6 +201,9 @@ export class EntityContainer {
 // Columns of the playable area (the walls start at x = 5).
 const COLUMNS = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
+// Chance that a grass or road row ahead of the start holds a coin.
+const COIN_CHANCE = 0.3;
+
 export class CrossyGameMap extends GameMap {
   // Columns of the last generated row that the player can reach from the
   // start. Each new row is built so that this never becomes empty: there is
@@ -231,7 +235,31 @@ export class CrossyGameMap extends GameMap {
     }
   }
 
+  // Puts a coin on the row (on one of `columns`) once in a while, after
+  // removing the coin it may still hold from an earlier use of the row.
+  placeCoin = (entity, columns: number[]) => {
+    this.removeCoin(entity);
+    if (this.rowCount <= startingRow || !columns.length) return;
+    if (Math.random() > COIN_CHANCE) return;
+    const x = columns[Math.floor(Math.random() * columns.length)];
+    const mesh = ModelLoader._coin.getNode();
+    mesh.position.set(x, entity.top + 0.05, 0);
+    entity.add(mesh);
+    entity.coin = { x, mesh };
+  };
+
+  removeCoin = (entity) => {
+    if (entity.coin) {
+      entity.remove(entity.coin.mesh);
+      entity.coin = null;
+    }
+  };
+
   tick(dt, hero) {
+    // coins spin on themselves
+    for (const row of [...this.grasses.items, ...this.roads.items]) {
+      if (row.coin) row.coin.mesh.rotation.y += 0.05;
+    }
     for (const railRoad of this.railRoads.items) {
       railRoad.update(dt, hero);
     }
@@ -315,6 +343,7 @@ export class CrossyGameMap extends GameMap {
             this.reachable = this.reachableInGrass(grass, below);
           }
         }
+        this.placeCoin(grass, this.reachable);
         this.setRow(this.rowCount, {
           type: "grass",
           entity: this.grasses.items[this.grasses.count],
@@ -343,6 +372,7 @@ export class CrossyGameMap extends GameMap {
             type: "road",
             entity: this.roads.items[this.roads.count],
           });
+          this.placeCoin(this.roads.items[this.roads.count], COLUMNS);
           this.roads.count++;
           this.reachable = COLUMNS; // the player can walk along the road
         }
@@ -389,6 +419,8 @@ export class CrossyGameMap extends GameMap {
   init = () => {
     for (let i = 0; i < maxRows; i++) {
       this.grasses.items[i].position.z = MAP_OFFSET;
+      this.removeCoin(this.grasses.items[i]); // coins left from the last game
+      this.removeCoin(this.roads.items[i]);
 
       this.water.items[i].position.z = MAP_OFFSET;
       this.water.items[i].active = false;

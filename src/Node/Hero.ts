@@ -1,12 +1,21 @@
 import Characters from "../Characters";
 import Generic from "./Generic";
-import { avatar } from "../Avatar";
-import { byTheme } from "../Theme";
+import { avatar, Outfit } from "../Avatar";
 
-// Characters built in code instead of loaded from .obj files.
-const builtCharacters = {
-  moi: () => avatar(byTheme({ singapore: "beach", exam: "suit", haze: "hazmat" } as const)),
+// Every skin is the player's avatar in a different outfit, built in code.
+const builtCharacters: Record<string, () => ReturnType<typeof avatar>> = {};
+const SKIN_OUTFITS: Record<string, Outfit> = {
+  pyjama: "beach",
+  toxic: "hazmat",
+  business: "suit",
+  licorne: "unicorn",
+  emo: "emo",
+  nerd: "nerd",
+  rich: "rich",
 };
+for (const [skin, outfit] of Object.entries(SKIN_OUTFITS)) {
+  builtCharacters[skin] = () => avatar(outfit);
+}
 
 export default class Hero extends Generic {
   setup = async () => {

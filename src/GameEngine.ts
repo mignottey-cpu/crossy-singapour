@@ -1,4 +1,5 @@
 import { Dimensions } from "react-native";
+import { TweenMax } from "gsap";
 import { Fog } from "three";
 
 import { swipeDirections } from "@/components/GestureView";
@@ -13,6 +14,7 @@ import {
 import CrossyPlayer from "./CrossyPlayer";
 import { HAZE_COLOR } from "./Haze";
 import { isHaze } from "./Theme";
+import { addCoins } from "./Wallet";
 import {
   CAMERA_EASING,
   DEBUG_CAMERA_CONTROLS,
@@ -373,8 +375,34 @@ export default class Engine {
     this._hero.targetPosition.y = finalY;
 
     this._hero.commitMovementAnimations({
-      onComplete: () => this.updateScore(),
+      onComplete: () => {
+        this.updateScore();
+        this.collectCoin();
+      },
     });
+  };
+
+  // Picks up the coin on the cell the player just landed on.
+  collectCoin = () => {
+    if (this.isGameEnded()) {
+      return;
+    }
+    const row = this.gameMap.getRow(Math.round(this._hero.position.z));
+    const coin = row && row.entity.coin;
+    if (!coin || coin.x !== Math.round(this._hero.position.x)) {
+      return;
+    }
+    const entity = row.entity;
+    entity.coin = null;
+    // the coin jumps up and shrinks away
+    TweenMax.to(coin.mesh.position, 0.3, { y: coin.mesh.position.y + 0.8 });
+    TweenMax.to(coin.mesh.scale, 0.3, {
+      x: 0.01,
+      y: 0.01,
+      z: 0.01,
+      onComplete: () => entity.remove(coin.mesh),
+    });
+    addCoins(1);
   };
 
   beginMoveWithDirection = () => {

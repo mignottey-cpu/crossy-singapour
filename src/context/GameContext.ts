@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export default createContext({
-  character: "moi",
+  character: "pyjama",
   setCharacter() {},
   highscore: 0,
   setHighscore() {},

@@ -8,6 +8,7 @@ import Tree from "./Node/Tree";
 import Train from "./Node/Train";
 import Boulder from "./Node/Boulder";
 import Building from "./Node/Building";
+import Coin from "./Node/Coin";
 import RailRoad from "./Node/RailRoad";
 import TrainLight from "./Node/TrainLight";
 import LilyPad from "./Node/LilyPad";
@@ -25,6 +26,7 @@ class ModelLoader {
     this._boulder = new Boulder();
     this._tree = new Tree();
     this._building = new Building();
+    this._coin = new Coin();
     this._car = new Car();
     this._railroad = new RailRoad();
     this._train = new Train();
@@ -42,6 +44,7 @@ class ModelLoader {
       this._boulder.setup(),
       this._tree.setup(),
       this._building.setup(),
+      this._coin.setup(),
       this._car.setup(),
       this._railroad.setup(),
       this._train.setup(),

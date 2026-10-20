@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import GestureRecognizer, { swipeDirections } from "@/components/GestureView";
+import CoinCounter from "@/components/CoinCounter";
 import Score from "@/components/ScoreText";
 import Engine from "@/GameEngine";
 import State from "@/state";
@@ -18,6 +19,7 @@ import CharacterSelectScreen from "@/screens/CharacterSelectScreen";
 import GameOverScreen from "@/screens/GameOverScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
+import ShopScreen from "@/screens/ShopScreen";
 import GameContext from "@/context/GameContext";
 
 const DEBUG_CAMERA_CONTROLS = false;
@@ -31,6 +33,7 @@ class Game extends Component {
     gameState: State.Game.none,
     showSettings: false,
     showCharacterSelect: false,
+    showShop: false,
     // gameState: State.Game.gameOver
   };
 
@@ -193,7 +196,7 @@ class Game extends Component {
   };
 
   renderHomeScreen = () => {
-    if (this.state.gameState !== State.Game.none) {
+    if (this.state.gameState !== State.Game.none || this.state.showShop) {
       return null;
     }
 
@@ -205,6 +208,9 @@ class Game extends Component {
           }}
           onShowCharacterSelect={() => {
             this.setState({ showCharacterSelect: true });
+          }}
+          onShop={() => {
+            this.setState({ showShop: true });
           }}
         />
       </View>
@@ -256,13 +262,26 @@ class Game extends Component {
         >
           {this.renderGame()}
         </Animated.View>
-        <Score
-          score={this.state.score}
-          gameOver={this.state.gameState === State.Game.gameOver}
-        />
+        {this.state.gameState !== State.Game.none && (
+          <Score
+            score={this.state.score}
+            gameOver={this.state.gameState === State.Game.gameOver}
+          />
+        )}
+        <CoinCounter />
         {this.renderGameOver()}
 
         {this.renderHomeScreen()}
+
+        {this.state.showShop && this.state.gameState === State.Game.none && (
+          <View style={StyleSheet.absoluteFillObject}>
+            <ShopScreen
+              character={this.props.character}
+              setCharacter={this.props.setCharacter}
+              onClose={() => this.setState({ showShop: false })}
+            />
+          </View>
+        )}
 
         {this.state.showSettings && this.renderSettingsScreen()}
 

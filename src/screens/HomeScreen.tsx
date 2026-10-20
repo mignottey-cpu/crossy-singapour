@@ -3,6 +3,8 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,15 +18,38 @@ import GameContext from "@/context/GameContext";
 
 let hasShownTitle = false;
 
+const SKIN_PREVIEW = {
+  pyjama: require("../../assets/images/skins/pyjama.png"),
+  toxic: require("../../assets/images/skins/toxic.png"),
+  business: require("../../assets/images/skins/business.png"),
+  licorne: require("../../assets/images/skins/licorne.png"),
+  emo: require("../../assets/images/skins/emo.png"),
+  nerd: require("../../assets/images/skins/nerd.png"),
+  rich: require("../../assets/images/skins/rich.png"),
+};
+
 function Screen(props) {
   const { setCharacter, character } = React.useContext(GameContext);
   const animation = new Animated.Value(0);
+
+  // Starts the game once, after the title slides away.
+  const starting = React.useRef(false);
+  const play = () => {
+    if (starting.current) return;
+    starting.current = true;
+    Animated.timing(animation, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: process.env.EXPO_OS !== "web",
+      easing: Easing.in(Easing.cubic),
+    }).start(() => props.onPlay());
+  };
 
   React.useEffect(() => {
     function onKeyUp({ keyCode }) {
       // Space, up-arrow
       if ([32, 38].includes(keyCode)) {
-        props.onPlay();
+        play();
       }
     }
 
@@ -84,19 +109,9 @@ function Screen(props) {
           StyleSheet.absoluteFill,
           { justifyContent: "center", alignItems: "center" },
         ]}
-        onPressIn={() => {
-          Animated.timing(animation, {
-            toValue: 0,
-            duration: 400,
-            useNativeDriver: process.env.EXPO_OS !== "web",
-            easing: Easing.in(Easing.qubic),
-            onComplete: ({ finished }) => {
-              if (finished) {
-                props.onPlay();
-              }
-            },
-          }).start();
-        }}
+        // start on touch down, or on release if the touch down was missed
+        onPressIn={play}
+        onPress={play}
       >
         <Text style={styles.coins}>{props.coins}</Text>
         <Animated.Image
@@ -127,6 +142,16 @@ function Screen(props) {
           /> */}
         </View>
       </TouchableOpacity>
+
+      {/* Skin shop, top left */}
+      <Pressable
+        onPress={props.onShop}
+        accessibilityLabel="Skins"
+        style={[styles.shopButton, { top: Math.max(top, 16), left: Math.max(left, 12) }]}
+      >
+        <Image source={SKIN_PREVIEW[character] ?? SKIN_PREVIEW.pyjama} style={styles.shopPreview} />
+        <Text style={styles.shopText}>SKINS</Text>
+      </Pressable>
     </View>
   );
 }
@@ -134,6 +159,17 @@ function Screen(props) {
 export default Screen;
 
 const styles = StyleSheet.create({
+  shopButton: {
+    position: "absolute",
+    width: 76,
+    alignItems: "center",
+    paddingVertical: 4,
+    backgroundColor: "#4cb8f0",
+    borderWidth: 3,
+    borderColor: "#ffffff",
+  },
+  shopPreview: { width: 56, height: 56, resizeMode: "contain" },
+  shopText: { color: "white", fontFamily: "retro", fontSize: 12 },
   container: {
     flex: 1,
     alignItems: "center",

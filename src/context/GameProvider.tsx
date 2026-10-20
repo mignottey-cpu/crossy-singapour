@@ -2,11 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as React from "react";
 
 import GameContext from "./GameContext";
+import { DEFAULT_SKIN } from "../Skins";
+import { restoreWallet, selectSkin } from "../Wallet";
 
 const STORAGE_KEY = "@BouncyBacon:Character";
 const SHOULD_REHYDRATE = true;
 
-const defaultState = { character: "moi", highscore: 0 };
+const defaultState = { character: DEFAULT_SKIN, highscore: 0 };
 
 async function cacheAsync(value) {
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(value));
@@ -40,6 +42,8 @@ export default function GameProvider({ children }) {
     };
 
     parseModulesAsync();
+    // the skin worn is kept with the coins and the skins bought
+    restoreWallet().then(({ selected }) => setCharacter(selected));
   }, []);
 
   return (
@@ -48,7 +52,7 @@ export default function GameProvider({ children }) {
         character,
         setCharacter: (character) => {
           setCharacter(character);
-          cacheAsync({ character, highscore });
+          selectSkin(character);
         },
         highscore,
         setHighscore: (highscore) => {

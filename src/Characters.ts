@@ -1,34 +1,6 @@
-export default {
-  moi: {
-    name: "Moi",
-    id: "moi",
-  },
-  chicken: {
-    name: "Chicken",
-    id: "chicken",
-  },
-  // bacon: {
-  //   name: "Bacon",
-  //   id: "bacon",
-  // },
-  // brent: {
-  //   name: "Brent Vatne",
-  //   id: "brent",
-  // },
-  // avocoder: {
-  //   name: "Avocoder",
-  //   id: "avocoder",
-  // },
-  // wheeler: {
-  //   name: "Wheeler",
-  //   id: "wheeler",
-  // },
-  // palmer: {
-  //   name: "Palmer",
-  //   id: "palmer",
-  // },
-  // juwan: {
-  //   name: "Juwan",
-  //   id: "juwan",
-  // },
-};
+import { SKINS } from "./Skins";
+
+// Characters the player can play with: the skins (see Skins.ts).
+export default Object.fromEntries(
+  SKINS.map(({ id, name }) => [id, { id, name }])
+) as Record<string, { id: string; name: string }>;

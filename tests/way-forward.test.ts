@@ -11,7 +11,7 @@ mock.module(SRC + "/ModelLoader", () => ({
   default: {
     _grass: pool, _tree: pool, _boulder: pool, _building: pool, _river: pool, _road: pool,
     _car: { getRandom: sized }, _log: { getRandom: sized }, _lilyPad: { getRandom: sized },
-    _railroad: pool, _trainLight: pool, _train: { withSize: sized },
+    _railroad: pool, _trainLight: pool, _train: { withSize: sized }, _coin: pool,
   },
 }));
 mock.module(SRC + "/AudioManager", () => ({ default: { playAsync() {}, sounds: { train: { move: {} } } } }));
