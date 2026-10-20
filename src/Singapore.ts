@@ -393,7 +393,122 @@ function singleDecker(): Box[] {
   ];
 }
 
+// ---------- Supercars (replace the regular cars) ----------
+// Low, wide and long (front on +z), like Crossy Road cars but sportier.
+
+const RIM = 0xb0b4b8;
+const INTAKE = 0x151515;
+
+function supercarBase(): Box[] {
+  return [
+    // wheels with silver rims
+    [-8, 0, -8, 16, 3, 4, WHEEL],
+    [-8, 0, 4, 16, 3, 4, WHEEL],
+    [-8.1, 0.8, -7, 0.2, 1.4, 2, RIM],
+    [7.9, 0.8, -7, 0.2, 1.4, 2, RIM],
+    [-8.1, 0.8, 5, 0.2, 1.4, 2, RIM],
+    [7.9, 0.8, 5, 0.2, 1.4, 2, RIM],
+    // diffuser
+    [-6, 1, -10.3, 12, 1, 0.4, INTAKE],
+  ];
+}
+
+// Ferrari-style: sculpted body in Rosso Corsa, rounded cabin, quad tail lights.
+function ferrari(): Box[] {
+  const red = 0xd40000;
+  return [
+    ...supercarBase(),
+    [-7.5, 1.5, -10, 15, 3.5, 20, red],
+    [-7, 5, 3, 14, 0.8, 7, red], // long sloping hood
+    [-6.5, 5, -4, 13, 3, 7, GLASS_DARK],
+    [-5.5, 8, -3, 11, 0.7, 5, red], // roof
+    [-7, 5, -10, 14, 1.5, 6, red], // engine cover
+    [-7.6, 2.5, -5, 0.3, 2, 3, INTAKE], // side intakes
+    [7.3, 2.5, -5, 0.3, 2, 3, INTAKE],
+    [-1.5, 1.5, 10, 3, 1.5, 0.3, INTAKE], // grille
+    [-6.5, 4, 10, 3, 1, 0.3, 0xfff6c8], // slim LED headlights
+    [3.5, 4, 10, 3, 1, 0.3, 0xfff6c8],
+    [-6, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030], // round quad tail lights
+    [-3.5, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
+    [2, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
+    [4.5, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
+    [-0.5, 5.8, 9, 1, 0.3, 1, 0xffd400], // yellow badge on the hood
+  ];
+}
+
+// Lamborghini-style: sharp wedge, big rectangular side intakes, rear wing.
+function lamborghini(color: number): Box[] {
+  return [
+    ...supercarBase(),
+    [-7.5, 1.5, -10, 15, 2.5, 20, color],
+    [-7.5, 4, -10, 15, 1, 15, color], // wedge rises towards the back
+    [-7.5, 5, -10, 15, 1, 8, color],
+    [-6, 5, -3, 12, 2, 6, GLASS_DARK], // angular cabin
+    [-5, 7, -6, 10, 1.2, 6, GLASS_DARK],
+    [-5, 8.2, -6, 10, 0.5, 5, color],
+    [-7.7, 2.5, -8, 0.3, 3, 4, INTAKE], // huge side intakes
+    [7.4, 2.5, -8, 0.3, 3, 4, INTAKE],
+    [-7, 1.5, 10, 4, 1.5, 0.3, INTAKE], // front air curtains
+    [3, 1.5, 10, 4, 1.5, 0.3, INTAKE],
+    [-6.5, 3.2, 10, 3.5, 0.8, 0.3, 0xffffff], // Y-shaped lights
+    [3, 3.2, 10, 3.5, 0.8, 0.3, 0xffffff],
+    [-6.5, 4, -10.3, 4, 0.8, 0.3, 0xff3030],
+    [2.5, 4, -10.3, 4, 0.8, 0.3, 0xff3030],
+    [-6.5, 2.5, -10.3, 1, 1.5, 0.3, 0xff3030],
+    [5.5, 2.5, -10.3, 1, 1.5, 0.3, 0xff3030],
+    [-2, 7.5, -10, 0.6, 1.5, 1, INTAKE], // rear wing
+    [1.4, 7.5, -10, 0.6, 1.5, 1, INTAKE],
+    [-7, 9, -10.5, 14, 0.6, 2.5, INTAKE],
+  ];
+}
+
+// Porsche 911-style: rounded silver coupe, round headlights, ducktail.
+function porsche911(): Box[] {
+  const silver = 0xd9dde0;
+  return [
+    ...supercarBase(),
+    [-7.5, 1.5, -10, 15, 3.5, 20, silver],
+    [-6.5, 5, 3, 13, 0.8, 6, silver],
+    [-6, 5, -5, 12, 3.5, 8, GLASS_DARK],
+    [-5.5, 8.5, -4.5, 11, 0.7, 6, silver], // long sloping roof
+    [-6.5, 5, -10, 13, 1.5, 5, silver],
+    [-7, 6.5, -10.5, 14, 0.6, 2, silver], // ducktail spoiler
+    [-6.5, 3.5, 10, 2.5, 2.5, 0.3, 0xfff6c8], // round-ish headlights
+    [4, 3.5, 10, 2.5, 2.5, 0.3, 0xfff6c8],
+    [-7, 4, -10.3, 14, 0.8, 0.3, 0xff3030], // light bar across the back
+  ];
+}
+
+// Bugatti Chiron-style: two-tone blue with the "C" line on the side.
+function bugatti(): Box[] {
+  const dark = 0x0b2a6f;
+  const light = 0x2f6fd8;
+  return [
+    ...supercarBase(),
+    [-7.5, 1.5, -10, 15, 3.5, 20, light],
+    [-7.5, 1.5, -10, 15, 3.5, 6, dark], // dark rear
+    [-7, 5, 3, 14, 0.8, 7, light],
+    [-6.5, 5, -4, 13, 3, 7, GLASS_DARK],
+    [-5.5, 8, -3, 11, 0.7, 5, dark],
+    [-7, 5, -10, 14, 1.5, 6, dark],
+    [-7.7, 2, -5, 0.3, 4, 0.6, RIM], // the chrome "C" curve
+    [-7.7, 5.4, -5, 0.3, 0.6, 5, RIM],
+    [7.4, 2, -5, 0.3, 4, 0.6, RIM],
+    [7.4, 5.4, -5, 0.3, 0.6, 5, RIM],
+    [-1.5, 1.5, 10, 3, 3, 0.4, RIM], // horseshoe grille
+    [-0.8, 2, 10.1, 1.6, 2, 0.4, INTAKE],
+    [-6.5, 3.5, 10, 3, 1.5, 0.3, 0xfff6c8],
+    [3.5, 3.5, 10, 3, 1.5, 0.3, 0xfff6c8],
+    [-7, 4, -10.3, 14, 0.6, 0.3, 0xff3030],
+  ];
+}
+
 export const vehicles = {
+  police_car: ferrari,
+  blue_car: bugatti,
+  green_car: () => lamborghini(0x7bd400), // Verde Mantis
+  orange_car: () => lamborghini(0xff7a00), // Arancio
+  purple_car: porsche911,
   taxi: grabCab,
   grab_car: grabCar,
   blue_truck: doubleDecker,
