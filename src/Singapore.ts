@@ -388,57 +388,62 @@ export const buildings = () =>
 
 // ---------- River (replace the logs and lily pads) ----------
 
-// Malayan water monitor, the big lizard swimming in Singapore's rivers.
-// Length in tiles (1-4), head on +x. Dark grey-brown with yellow spots.
-function waterMonitor(tiles: number): Box[] {
-  const L = tiles === 4 ? 62 : tiles * 16;
-  const x0 = -L / 2;
-  const dark = 0x3d3a2f;
-  const belly = 0x6b6650;
-  const spot = 0xd9c24a;
-  const tail = Math.round(L * 0.4);
-  const head = Math.max(5, Math.round(L * 0.15));
-  const body = L - tail - head;
-  const bodyX = x0 + tail;
-  const headX = bodyX + body;
+// Wads of Singapore dollar notes (Portrait series, first president
+// Yusof bin Ishak on the front) floating down the river, held by a bank band.
+// A platform 1 to 4 tiles long is a row of wads.
+const NOTES = [
+  { base: 0x7e57c2, light: 0xb39ddb }, // $2 purple
+  { base: 0x388e3c, light: 0x81c784 }, // $5 green
+  { base: 0xd32f2f, light: 0xef9a9a }, // $10 red
+  { base: 0x1565c0, light: 0x64b5f6 }, // $50 blue
+  { base: 0xef6c00, light: 0xffb74d }, // $100 orange
+];
 
-  const boxes: Box[] = [
-    // tail, tapering towards the tip
-    [x0, 1, -1, tail / 2, 2, 2, dark],
-    [x0 + tail / 2, 1, -1.5, tail / 2, 3, 3, dark],
-    // body
-    [bodyX, 0, -3, body, 5, 6, dark],
-    [bodyX, 0, -3.1, body, 1.5, 6.2, belly],
-    // neck + head
-    [headX, 1, -2, head * 0.4, 4, 4, dark],
-    [headX + head * 0.4, 1.5, -1.5, head * 0.6, 3, 3, dark],
-    // eyes and forked tongue
-    [headX + head * 0.5, 3.5, -1.7, 1, 0.8, 0.3, spot],
-    [headX + head * 0.5 + 0.3, 3.6, -1.8, 0.4, 0.5, 0.3, 0x111111],
-    [headX + head * 0.5, 3.5, 1.4, 1, 0.8, 0.3, spot],
-    [headX + head * 0.5 + 0.3, 3.6, 1.5, 0.4, 0.5, 0.3, 0x111111],
-    [x0 + L - 1, 2, -0.6, 1, 0.3, 0.4, 0xc0507f],
-    [x0 + L - 1, 2, 0.2, 1, 0.3, 0.4, 0xc0507f],
-    // legs, splayed out to the sides
-    [bodyX + 1, 0, -5, 2, 1.5, 2, dark],
-    [bodyX + 1, 0, 3, 2, 1.5, 2, dark],
-    [bodyX + body - 3, 0, -5, 2, 1.5, 2, dark],
-    [bodyX + body - 3, 0, 3, 2, 1.5, 2, dark],
-  ];
-  // rows of yellow spots on the back and bands on the tail
-  for (let x = bodyX + 1; x < bodyX + body - 1; x += 3) {
-    boxes.push([x, 5, -2, 1, 0.3, 1, spot]);
-    boxes.push([x + 1.5, 5, 1, 1, 0.3, 1, spot]);
+function wad(cx: number, note: { base: number; light: number }): Box[] {
+  const L = 15;
+  const D = 8;
+  const x0 = cx - L / 2;
+  const boxes: Box[] = [];
+  // a few notes stacked a bit messily
+  for (let i = 0; i < 3; i++) {
+    const o = [0, 0.4, -0.3][i];
+    boxes.push([x0 + o, 2 + i, -D / 2 - o / 2, L, 1, D, i % 2 ? note.light : note.base]);
   }
-  for (let x = x0 + 2; x < bodyX - 1; x += 4) {
-    boxes.push([x, x < x0 + tail / 2 ? 3 : 4, -1, 1, 0.3, 2, spot]);
+  const y = 5;
+  boxes.push(
+    [x0 + 0.5, y, -D / 2 + 0.5, L - 1, 0.1, D - 1, note.light], // inner frame
+    [x0 + 1, y + 0.05, -D / 2 + 1, L - 2, 0.1, D - 2, note.base],
+    // portrait of Yusof bin Ishak in an oval frame
+    [x0 + 1.5, y + 0.1, -2.2, 4, 0.1, 4.4, 0xe8dcc0],
+    [x0 + 2.2, y + 0.15, -1.4, 2.6, 0.1, 2.8, 0x8d6e63],
+    [x0 + 2.5, y + 0.2, 0.4, 2, 0.1, 1, 0x4e342e], // songkok
+    // silver holographic strip and the value in the corner
+    [x0 + 6.5, y + 0.1, -D / 2 + 0.5, 0.8, 0.1, D - 1, 0xcfd8dc],
+    [x0 + L - 4, y + 0.1, 1.5, 2.6, 0.1, 1.6, 0xffffff],
+    [x0 + L - 4, y + 0.1, -3, 1.6, 0.1, 1, 0xffffff],
+    [x0 + 9, y + 0.1, -0.8, 1.6, 0.1, 1.6, 0xf2c230], // coat of arms
+    // bank band around the wad
+    [cx + 2.5, 1.9, -D / 2 - 0.1, 2.5, y - 1.7, D + 0.2, 0xf5ecd7],
+    [cx + 2.5, y + 0.2, -D / 2 - 0.1, 2.5, 0.2, D + 0.2, 0xf5ecd7],
+    [cx + 3.4, y + 0.4, -D / 2 - 0.1, 0.7, 0.1, D + 0.2, 0xb71c1c],
+  );
+  return boxes;
+}
+
+function notes(tiles: number): Box[] {
+  const L = tiles === 4 ? 62 : tiles * 16;
+  const step = L / tiles;
+  const boxes: Box[] = [];
+  for (let i = 0; i < tiles; i++) {
+    const note = NOTES[(i * 2 + tiles) % NOTES.length];
+    boxes.push(...wad(-L / 2 + step * (i + 0.5), note));
   }
   return boxes;
 }
 
-export const lizards = () =>
+export const banknotes = () =>
   [1, 2, 3, 4].map((t) =>
-    voxelModel(waterMonitor(t), { castShadow: true, receiveShadow: true })
+    voxelModel(notes(t), { castShadow: true, receiveShadow: true })
   );
 
 // ---------- Vehicles ----------

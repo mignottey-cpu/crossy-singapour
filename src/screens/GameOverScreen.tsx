@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Alert,
   Animated,
   Easing,
   StyleSheet,
@@ -14,7 +13,6 @@ import Footer from "@/components/GameOver/Footer";
 import AudioManager from "@/AudioManager";
 import Characters from "@/Characters";
 import GameContext from "@/context/GameContext";
-import Images from "@/Images";
 
 // import { setGameState } from '../src/actions/game';
 
@@ -22,24 +20,8 @@ import Images from "@/Images";
 const banner = [
   {
     color: "#3640eb",
-    title: "Get Updates Subscribe Now",
-    button: {
-      onPress: (_) => {
-        Alert.alert(
-          "Subscribe to our mailing list",
-          "Join our mailing list and discover the latest news from Expo and Evan Bacon.\n\n Read our privacy policy on https://github.com/EvanBacon/Expo-Crossy-Road/privacy.md",
-          [
-            { text: "Cancel", onPress: () => console.log("Cancel Pressed!") },
-            { text: "OK", onPress: () => console.log("OK Pressed!") },
-          ],
-          {
-            cancelable: false,
-          }
-        );
-      },
-      source: Images.button.mail,
-      style: { aspectRatio: 1.85, height: 40 },
-    },
+    // The retro font has no accented letters, so the text is written without them.
+    title: "Vous etes deborde par le travail",
   },
   {
     color: "#368FEB",
