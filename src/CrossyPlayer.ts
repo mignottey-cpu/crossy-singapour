@@ -138,6 +138,7 @@ export default class CrossyPlayer extends Group {
     this.position.set(0, groundLevel, startingRow);
     this.scale.set(1, 1, 1);
     this.rotation.set(0, Math.PI, 0);
+    this.visible = true; // hidden after drowning
 
     this.initialPosition = null;
     this.targetPosition = null;

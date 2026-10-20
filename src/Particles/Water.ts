@@ -1,10 +1,21 @@
-import { Bounce, TweenMax } from "gsap";
-import { BoxGeometry, Group, Mesh, MeshPhongMaterial } from "three";
+import { Power1, TweenMax } from "gsap";
+import {
+  BoxGeometry,
+  DoubleSide,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  MeshPhongMaterial,
+  RingGeometry,
+} from "three";
+
+import { isExam } from "../Theme";
 
 export default class Water {
   constructor() {
     this.waterMat = new MeshPhongMaterial({
-      color: 0x71d7ff,
+      // splash in the colour of the water (ink blue in exam mode)
+      color: isExam() ? 0x5068c0 : 0x71d7ff,
       // shading: FlatShading,
       flatShading: true,
     });
@@ -19,19 +30,42 @@ export default class Water {
       this.parts.push(partPink);
       this.mesh.add(partPink);
     }
+
+    // ripple spreading on the surface
+    this.ringMat = new MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0,
+      side: DoubleSide,
+    });
+    this.ring = new Mesh(new RingGeometry(0.3, 0.42, 24), this.ringMat);
+    this.ring.rotation.x = -Math.PI / 2;
+    this.ring.position.y = 0.2;
+    this.ring.visible = false;
+    this.mesh.add(this.ring);
   }
 
   run = () => {
     const explosionSpeed = 0.3;
+
+    this.ring.visible = true;
+    this.ring.scale.set(0.5, 0.5, 0.5);
+    this.ringMat.opacity = 0.8;
+    TweenMax.to(this.ring.scale, 1.2, { x: 3, y: 3, z: 3 });
+    TweenMax.to(this.ringMat, 1.2, {
+      opacity: 0,
+      onComplete: () => (this.ring.visible = false),
+    });
 
     const removeParticle = (p) => {
       p.visible = false;
     };
 
     for (let i = 0; i < this.parts.length; i++) {
-      let tx = -1.0 + Math.random() * 1.0;
-      let ty = Math.random() * 2.0 + 1;
-      let tz = -1.0 + Math.random() * 1.0;
+      // a lower, wider splash than the original
+      let tx = (Math.random() - 0.5) * 1.6;
+      let ty = Math.random() * 0.9 + 0.6;
+      let tz = (Math.random() - 0.5) * 1.6;
       let p = this.parts[i];
 
       const bezier = {
@@ -58,7 +92,7 @@ export default class Water {
 
       TweenMax.to(p.position, s * 4, {
         bezier,
-        ease: Bounce.easeOut,
+        ease: Power1.easeOut,
       });
 
       const scaleTo = 0.01;

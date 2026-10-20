@@ -10,6 +10,9 @@ export default class Water extends Object3D {
   entities = [];
   sineCount = 0;
   sineInc = Math.PI / 50;
+  // drowning animation: 0 = just fell in, 1 = fully under water
+  sinkProgress = 0;
+  sinkDrift = 0;
   top = 0.25;
   lilyPadPositions: number[] = [];
 
@@ -239,14 +242,20 @@ export default class Water extends Object3D {
     if (Math.round(player.position.z) === this.position.z && !player.moving) {
       if (!player.ridingOn) {
         if (player.isAlive) {
+          this.sinkProgress = 0;
+          this.sinkDrift = (this.entities[0]?.speed || 0) * 0.5;
           this.onCollide(this.floor, "water");
-        } else {
-          let y = this.getPlayerSunkenPosition();
-          this.sineCount += this.sineInc;
-          player.position.y = y;
-          player.rotation.y += 0.01;
-
-          player.position.x += this.entities[0].speed;
+        } else if (this.sinkProgress < 1) {
+          // Wobble, then sink under the surface while drifting with the
+          // current, and disappear.
+          this.sinkProgress = Math.min(1, this.sinkProgress + 0.018);
+          const t = this.sinkProgress;
+          player.position.y = this.getPlayerSunkenPosition() - t * t * 1.4;
+          player.rotation.z = Math.sin(t * Math.PI * 4) * 0.3 * (1 - t);
+          player.position.x += this.sinkDrift;
+          if (t >= 1) {
+            player.visible = false;
+          }
         }
       }
     }
