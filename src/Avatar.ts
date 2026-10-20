@@ -288,7 +288,7 @@ const emoFringe: Box[] = [
   [-4, 16.4, -2, 0.6, 1.5, 3, 0x6a1b9a], // purple streak
 ];
 
-export type Outfit = "beach" | "suit" | "hazmat" | "unicorn" | "emo" | "nerd" | "rich";
+export type Outfit = "beach" | "suit" | "hazmat" | "unicorn" | "emo" | "nerd" | "rich" | "copine";
 
 const OUTFITS: Record<Outfit, () => Box[]> = {
   beach: beachOutfit,
@@ -298,9 +298,87 @@ const OUTFITS: Record<Outfit, () => Box[]> = {
   emo: emoOutfit,
   nerd: nerdOutfit,
   rich: richOutfit,
+  copine: () => [], // a whole different character, see copine()
 };
 
+
+// "Copine" (secret skin): very long brown hair in a high ponytail reaching the
+// waist, a fringe, freckles, silver hoops and necklaces, a black off-shoulder
+// long-sleeved top, wide light-grey jeans with a black belt and a taupe suede
+// tote bag with a little white plush. Front faces +z, like the other skins.
+function copine(): Box[] {
+  const hair = 0x6b4a32;
+  const hairLight = 0x8a6446;
+  const skin = 0xf3cdb3;
+  const top = 0x151515;
+  const jeans = 0xb8b8b4;
+  const silver = 0xd0d4d8;
+  const boxes: Box[] = [
+    // feet and wide jeans
+    [-3.2, 0, -1, 2.4, 0.8, 4, 0x8d6e63],
+    [0.8, 0, -1, 2.4, 0.8, 4, 0x8d6e63],
+    [-3.4, 0.8, -0.4, 2.8, 4.2, 2.8, jeans],
+    [0.6, 0.8, -0.4, 2.8, 4.2, 2.8, jeans],
+    [-3, 2.5, 2.42, 0.8, 1.5, 0.05, 0xd5d5d0], // faded patches
+    [-3, 5, -0.5, 6, 0.6, 2.5, 0x1a1a1a], // black belt
+    // black off-shoulder top with long sleeves down to the hands
+    [-3, 5.6, -0.5, 6, 4, 2.5, top],
+    [-3, 9.6, -0.5, 4.2, 0.6, 2.5, top],
+    [1.2, 9.6, -0.5, 1.8, 0.6, 2.5, skin], // bare shoulder
+    [1.6, 9.6, 1.2, 0.3, 0.65, 0.3, 0xf5e6c8], // strap
+    [-4.5, 4.6, -0.25, 1.5, 5.3, 2, top],
+    [-4.5, 4.1, -0.25, 1.5, 0.5, 2, skin],
+    [3, 4.6, -0.25, 1.5, 5.3, 2, top],
+    [3, 4.1, -0.25, 1.5, 0.5, 2, skin],
+    // taupe suede tote on the right shoulder, white plush hanging from it
+    [4.5, 3, -1.8, 1.6, 4.2, 4.2, 0x9c8a78],
+    [4.6, 7.2, -0.2, 0.6, 2.6, 0.6, 0x8a7866],
+    [3.2, 9.6, -0.2, 1.8, 0.5, 0.6, 0x8a7866],
+    [4.4, 2.4, -2.6, 1.2, 1.2, 1, 0xf5f5f5],
+    // neck, necklaces, head
+    [-1, 10, 0, 2, 1, 2, skin],
+    [-1.1, 10.2, 2.02, 2.2, 0.25, 0.1, silver],
+    [-0.8, 9.7, 2.05, 1.6, 0.25, 0.1, silver],
+    [-3.5, 11, -2.5, 7, 6, 6, skin],
+    [-3.8, 12.8, 0, 0.3, 1.5, 1, 0xe6b89a], // ears
+    [3.5, 12.8, 0, 0.3, 1.5, 1, 0xe6b89a],
+    [-4.2, 11.4, 0.2, 0.3, 1.4, 0.3, silver], // hoop earrings
+    [3.9, 11.4, 0.2, 0.3, 1.4, 0.3, silver],
+    // face: brown eyes, soft brows, freckles, pink lips
+    [-2.7, 13.3, 3.5, 1.6, 1, 0.15, 0xffffff],
+    [1.1, 13.3, 3.5, 1.6, 1, 0.15, 0xffffff],
+    [-2, 13.3, 3.5, 0.8, 1, 0.25, 0x4e3324],
+    [1.2, 13.3, 3.5, 0.8, 1, 0.25, 0x4e3324],
+    [-2.8, 14.6, 3.5, 2, 0.4, 0.25, 0x5a3e2b],
+    [0.8, 14.6, 3.5, 2, 0.4, 0.25, 0x5a3e2b],
+    [-0.4, 12.4, 3.5, 0.8, 1.2, 0.4, 0xe6b89a], // nose
+    [-0.9, 11.7, 3.5, 1.8, 0.4, 0.2, 0xd9777a], // lips
+    // hair: top, fringe, strands framing the face
+    [-4, 16.4, -3, 8, 1.8, 6.9, hair],
+    [-4, 15.4, 3.5, 8, 1.2, 0.6, hair], // fringe
+    [-3.2, 14.9, 3.5, 2.2, 0.6, 0.6, hairLight],
+    [1, 14.9, 3.5, 2.2, 0.6, 0.6, hairLight],
+    [-4.2, 11, -2, 0.7, 5.5, 5.8, hair], // side strands
+    [3.5, 11, -2, 0.7, 5.5, 5.8, hair],
+    [-4.2, 9.2, 2.2, 0.7, 2, 1.2, hairLight],
+    [3.5, 9.2, 2.2, 0.7, 2, 1.2, hairLight],
+    [-4, 11.4, -3, 8, 5, 0.5, hair], // back of the head
+    // high ponytail falling down to the waist
+    [-0.9, 16, -3.8, 1.8, 1, 1, 0x111111], // hair tie
+    [-1.2, 13, -4.6, 2.4, 3.4, 1.8, hair],
+    [-1.1, 9, -4.4, 2.2, 4.2, 1.6, hairLight],
+    [-1, 5.5, -4.1, 2, 3.6, 1.4, hair],
+    [-0.8, 3.5, -3.8, 1.6, 2.2, 1.2, hairLight],
+  ];
+  // freckles
+  for (const [x, y] of [[-2.6, 12.7], [-1.9, 12.4], [-1.4, 12.9], [1.1, 12.8], [1.7, 12.4], [2.3, 12.7]]) {
+    boxes.push([x, y, 3.55, 0.25, 0.25, 0.1, 0xb07a5a]);
+  }
+  return boxes;
+}
+
 function me(outfit: Outfit): Box[] {
+  if (outfit === "copine") return copine();
   const clothes = OUTFITS[outfit]();
   const boxes: Box[] = [
     ...clothes,

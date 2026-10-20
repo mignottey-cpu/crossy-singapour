@@ -12,6 +12,7 @@ const SKIN_OUTFITS: Record<string, Outfit> = {
   emo: "emo",
   nerd: "nerd",
   rich: "rich",
+  secret: "copine",
 };
 for (const [skin, outfit] of Object.entries(SKIN_OUTFITS)) {
   builtCharacters[skin] = () => avatar(outfit);

@@ -76,7 +76,7 @@ class Game extends Component {
     }
     const lastState = this.state.gameState;
 
-    this.setState({ gameState });
+    this.setState(gameState === State.Game.playing ? { gameState, showShop: false } : { gameState });
     this.engine.gameState = gameState;
     const { playing, gameOver, paused, none } = State.Game;
     switch (gameState) {
@@ -187,6 +187,9 @@ class Game extends Component {
           showSettings={() => {
             this.setState({ showSettings: true });
           }}
+          onShop={() => {
+            this.setState({ showShop: true });
+          }}
           setGameState={(state) => {
             this.updateWithGameState(state);
           }}
@@ -273,7 +276,7 @@ class Game extends Component {
 
         {this.renderHomeScreen()}
 
-        {this.state.showShop && this.state.gameState === State.Game.none && (
+        {this.state.showShop && this.state.gameState !== State.Game.playing && (
           <View style={StyleSheet.absoluteFillObject}>
             <ShopScreen
               character={this.props.character}

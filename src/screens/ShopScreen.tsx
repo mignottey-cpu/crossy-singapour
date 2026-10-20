@@ -11,18 +11,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CoinIcon } from "@/components/CoinCounter";
+import { SKIN_PREVIEWS } from "@/components/SkinButton";
 import { SKINS, SkinId } from "@/Skins";
 import { buySkin, getWallet, subscribeWallet } from "@/Wallet";
 
-const PREVIEWS: Record<SkinId, number> = {
-  pyjama: require("../../assets/images/skins/pyjama.png"),
-  toxic: require("../../assets/images/skins/toxic.png"),
-  business: require("../../assets/images/skins/business.png"),
-  licorne: require("../../assets/images/skins/licorne.png"),
-  emo: require("../../assets/images/skins/emo.png"),
-  nerd: require("../../assets/images/skins/nerd.png"),
-  rich: require("../../assets/images/skins/rich.png"),
-};
 
 // Skin shop: pick an unlocked skin, or buy a new one with the coins.
 // The retro font has no accents, so texts are written without them.
@@ -42,7 +34,8 @@ export default function ShopScreen({ character, setCharacter, onClose }) {
       setMessage("");
     } else if (buySkin(id)) {
       setCharacter(id);
-      setMessage("Nouveau skin debloque !");
+      const skin = SKINS.find((s) => s.id === id);
+      setMessage(skin?.revealedName ? `Surprise ! ${skin.revealedName} debloquee !` : "Nouveau skin debloque !");
     } else {
       setMessage(`Il te manque ${price - wallet.coins} pieces`);
     }
@@ -62,7 +55,7 @@ export default function ShopScreen({ character, setCharacter, onClose }) {
       </View>
       <Text style={styles.message}>{message}</Text>
       <ScrollView contentContainerStyle={styles.grid}>
-        {SKINS.map(({ id, name, price }) => {
+        {SKINS.map(({ id, name, price, revealedName }) => {
           const unlocked = wallet.unlocked.includes(id);
           const selected = character === id;
           const affordable = wallet.coins >= price;
@@ -73,10 +66,10 @@ export default function ShopScreen({ character, setCharacter, onClose }) {
               style={[styles.card, { width: cardWidth }, selected && styles.cardSelected]}
             >
               <Image
-                source={PREVIEWS[id]}
+                source={SKIN_PREVIEWS[id]}
                 style={[styles.preview, { width: cardWidth - 16, height: cardWidth - 16 }, !unlocked && styles.locked]}
               />
-              <Text style={styles.name} numberOfLines={1}>{name}</Text>
+              <Text style={styles.name} numberOfLines={1}>{unlocked ? revealedName ?? name : name}</Text>
               {selected ? (
                 <Text style={[styles.status, styles.selectedText]}>CHOISI</Text>
               ) : unlocked ? (
@@ -146,7 +139,8 @@ const styles = StyleSheet.create({
   },
   cardSelected: { backgroundColor: "#66bb6a", borderColor: "#ffd54f" },
   preview: { resizeMode: "contain" },
-  locked: { opacity: 0.45 },
+  // skins not bought yet are only a black silhouette
+  locked: { tintColor: "#000000" },
   name: { color: "white", fontFamily: "retro", fontSize: 12, marginTop: 6 },
   status: { color: "white", fontFamily: "retro", fontSize: 14, marginTop: 6 },
   selectedText: { color: "#ffd54f" },

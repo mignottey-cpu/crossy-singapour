@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Banner from "@/components/GameOver/Banner";
 import Footer from "@/components/GameOver/Footer";
+import SkinButton from "@/components/SkinButton";
 import AudioManager from "@/AudioManager";
 import Characters from "@/Characters";
 import GameContext from "@/context/GameContext";
@@ -76,7 +77,7 @@ function GameOver({ ...props }) {
       setTimeout(() => playBannerSound(), 300);
       setTimeout(() => playBannerSound(), 600);
     }, 600);
-  });
+  }, []);
 
   const _animateBanners = () => {
     const _animations = animations.map((animation) =>
@@ -152,6 +153,9 @@ function GameOver({ ...props }) {
         setGameState={props.setGameState}
         navigation={props.navigation}
       />
+
+      {/* Skin shop, top right under the coins */}
+      <SkinButton onPress={props.onShop} style={{ top: Math.max(top, 16) + 44, right: Math.max(right, 12) }} />
     </View>
   );
 }

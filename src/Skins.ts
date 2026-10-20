@@ -7,9 +7,11 @@ export type SkinId =
   | "licorne"
   | "emo"
   | "nerd"
-  | "rich";
+  | "rich"
+  | "secret";
 
-export type Skin = { id: SkinId; name: string; price: number };
+// `revealedName` replaces the name once the skin has been bought.
+export type Skin = { id: SkinId; name: string; price: number; revealedName?: string };
 
 export const SKINS: Skin[] = [
   { id: "pyjama", name: "Pyjama Boy", price: 0 },
@@ -19,6 +21,7 @@ export const SKINS: Skin[] = [
   { id: "emo", name: "Emo Boy", price: 50 },
   { id: "nerd", name: "Nerd Boy", price: 75 },
   { id: "rich", name: "Rich Boy", price: 150 },
+  { id: "secret", name: "Secret", price: 300, revealedName: "Copine" },
 ];
 
 export const DEFAULT_SKIN: SkinId = "pyjama";

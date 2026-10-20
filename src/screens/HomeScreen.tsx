@@ -3,8 +3,6 @@ import {
   Animated,
   Dimensions,
   Easing,
-  Image,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,22 +12,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Hand from "@/components/HandCTA";
 import Footer from "@/components/Home/Footer";
-import GameContext from "@/context/GameContext";
+import SkinButton from "@/components/SkinButton";
 
 let hasShownTitle = false;
 
-const SKIN_PREVIEW = {
-  pyjama: require("../../assets/images/skins/pyjama.png"),
-  toxic: require("../../assets/images/skins/toxic.png"),
-  business: require("../../assets/images/skins/business.png"),
-  licorne: require("../../assets/images/skins/licorne.png"),
-  emo: require("../../assets/images/skins/emo.png"),
-  nerd: require("../../assets/images/skins/nerd.png"),
-  rich: require("../../assets/images/skins/rich.png"),
-};
-
 function Screen(props) {
-  const { setCharacter, character } = React.useContext(GameContext);
   const animation = new Animated.Value(0);
 
   // Starts the game once, after the title slides away.
@@ -144,14 +131,7 @@ function Screen(props) {
       </TouchableOpacity>
 
       {/* Skin shop, top left */}
-      <Pressable
-        onPress={props.onShop}
-        accessibilityLabel="Skins"
-        style={[styles.shopButton, { top: Math.max(top, 16), left: Math.max(left, 12) }]}
-      >
-        <Image source={SKIN_PREVIEW[character] ?? SKIN_PREVIEW.pyjama} style={styles.shopPreview} />
-        <Text style={styles.shopText}>SKINS</Text>
-      </Pressable>
+      <SkinButton onPress={props.onShop} style={{ top: Math.max(top, 16), left: Math.max(left, 12) }} />
     </View>
   );
 }
@@ -159,17 +139,6 @@ function Screen(props) {
 export default Screen;
 
 const styles = StyleSheet.create({
-  shopButton: {
-    position: "absolute",
-    width: 76,
-    alignItems: "center",
-    paddingVertical: 4,
-    backgroundColor: "#4cb8f0",
-    borderWidth: 3,
-    borderColor: "#ffffff",
-  },
-  shopPreview: { width: 56, height: 56, resizeMode: "contain" },
-  shopText: { color: "white", fontFamily: "retro", fontSize: 12 },
   container: {
     flex: 1,
     alignItems: "center",
