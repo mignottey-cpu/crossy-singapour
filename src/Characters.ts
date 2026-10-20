@@ -1,4 +1,8 @@
 export default {
+  moi: {
+    name: "Moi",
+    id: "moi",
+  },
   chicken: {
     name: "Chicken",
     id: "chicken",
