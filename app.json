@@ -22,7 +22,7 @@
       "versionCode": 1
     },
     "web": {
-      "output": "static"
+      "output": "single"
     },
     "plugins": [
       "expo-asset",
