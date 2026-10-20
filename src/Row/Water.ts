@@ -137,7 +137,8 @@ export default class Water extends Object3D {
 
       this.entities[x].mesh.position.set(xPos, -0.1, 0);
       this.entities[x].speed = speed * xDir;
-      // this.entities[x].mesh.rotation.y = (Math.PI / 2) * xDir;
+      // Lizards swim head first
+      this.entities[x].mesh.rotation.y = xDir > 0 ? 0 : Math.PI;
 
       xPos -= (Math.random() * 3 + 5) * xDir;
     }
