@@ -186,25 +186,35 @@ function micStand(): Box[] {
   ];
 }
 
-// Golden saxophone statue on a pedestal.
-function saxophone(): Box[] {
-  return [
-    [-3, 0, -3, 6, 3, 6, 0x3d2b4f], // pedestal
-    [-1, 3, -1, 2, 3, 2, GOLD], // bottom bow
-    [1, 3, -1, 3, 2, 2, GOLD],
-    [2.5, 5, -1.5, 3, 5, 3, GOLD], // bell going up
-    [2.2, 10, -1.8, 3.6, 0.8, 3.6, 0xffd54f],
-    [-1, 6, -1, 2, 11, 2, GOLD], // body
-    [-1.3, 7, -1.4, 0.6, 0.6, 0.4, 0xffe082], // keys
-    [-1.3, 9, -1.4, 0.6, 0.6, 0.4, 0xffe082],
-    [-1.3, 11, -1.4, 0.6, 0.6, 0.4, 0xffe082],
-    [-1.3, 13, -1.4, 0.6, 0.6, 0.4, 0xffe082],
-    [-0.5, 17, -0.5, 1, 1, 3, GOLD], // neck
-    [-0.4, 16, 2, 0.8, 1.6, 0.8, BLACK], // mouthpiece
+// Electric guitar standing on its stand: cherry body, white pickguard,
+// rosewood neck and a headstock with its tuning pegs. Faces -z.
+function guitar(): Box[] {
+  const body = 0xc62828;
+  const boxes: Box[] = [
+    [-3, 0, -2.5, 6, 0.6, 5, 0x333333], // stand
+    [-0.3, 0.6, 1, 0.6, 9, 0.6, 0x333333],
+    [-4, 1.5, -1, 8, 5, 2, body], // lower bout
+    [-3, 6.5, -1, 6, 1.5, 2, body], // waist
+    [-3.5, 8, -1, 7, 3.5, 2, body], // upper bout
+    [1.5, 10.5, -1, 1.5, 2.5, 2, body], // horn
+    [-2.5, 2.5, -1.1, 3.5, 5, 0.1, 0xf5f5f5], // pickguard
+    [-1.6, 6, -1.2, 3.2, 0.8, 0.1, 0x9e9e9e], // pickups
+    [-1.6, 8.6, -1.2, 3.2, 0.8, 0.1, 0x9e9e9e],
+    [-1.4, 3, -1.2, 2.8, 0.6, 0.1, 0x616161], // bridge
+    [2, 3, -1.2, 0.7, 0.7, 0.1, 0xffd54f], // knobs
+    [2, 4.3, -1.2, 0.7, 0.7, 0.1, 0xffd54f],
+    [-0.7, 11.5, -0.6, 1.4, 9, 1.2, 0x4e342e], // neck
+    [-1, 20.5, -0.7, 2, 3.5, 1.4, 0x3e2723], // headstock
   ];
+  for (let y = 12.5; y < 20.5; y += 1.3) boxes.push([-0.7, y, -0.65, 1.4, 0.15, 0.05, 0xbdbdbd]); // frets
+  for (const x of [-0.45, -0.1, 0.25]) boxes.push([x, 3, -0.7, 0.08, 17.5, 0.05, 0xeeeeee]); // strings
+  for (const y of [21, 22.2, 23.4]) {
+    boxes.push([-1.6, y, -0.3, 0.6, 0.6, 0.6, 0xcfd8dc], [1, y, -0.3, 0.6, 0.6, 0.6, 0xcfd8dc]); // pegs
+  }
+  return boxes;
 }
 
-export const loveTrees = () => [heartLamp(), roseBush(), micStand(), saxophone()].map((b) => voxelModel(b));
+export const loveTrees = () => [heartLamp(), roseBush(), micStand(), guitar()].map((b) => voxelModel(b));
 
 // ---------- Obstacles (replace the boulders) ----------
 
@@ -229,28 +239,68 @@ function speaker(): Box[] {
   ];
 }
 
-// The TV Girl album poster, in blue and pink, on a stand: a woman's face in
-// profile on a pink background over a blue band, and the band's name.
+// The picture of TV Girl's "Who Really Cares" cover (2016): a man in blue
+// light holding a woman in pink light, on black. 32x32 pixels, one digit per
+// pixel (see POSTER_COLORS), taken from the cover.
+const POSTER = [
+  "00000000001222210000000000000000",
+  "00000000000122200000000000000000",
+  "00000000000111200000000000000000",
+  "00000000000012200000000000000000",
+  "00000000000002204000000000000000",
+  "00000000000012235300000000000000",
+  "00000000000222245430000000000000",
+  "00000000001222234444300000000000",
+  "00000000002222245544400000000000",
+  "00000000002222245545400000000000",
+  "00000000002221245554300001100000",
+  "00000000002210124554400022110000",
+  "00000000012210024544440222100000",
+  "00000000022210002444554222100000",
+  "00000000122210045555542222100000",
+  "00000000122210455555522222100000",
+  "00000000112203555555422222100000",
+  "00000001111104555554222221000000",
+  "00000002110045555542222220000000",
+  "00000002210045543422222210000000",
+  "00000002211035400222222100000000",
+  "00000002210004002222221000003000",
+  "00000002210000022222200300033000",
+  "00000002210000222221034300344300",
+  "00000032210002222203444000444300",
+  "00003442122122221345430003444300",
+  "00344442212222204544000034444400",
+  "04555422212222104430000345544300",
+  "45555422222222034000003455544300",
+  "45555422221221000000344455544300",
+  "45555412221211000003455555544000",
+  "44444444111100000034444444444000",
+];
+const POSTER_COLORS = [0x080810, 0x1e1e78, 0x3246e1, 0x961e78, 0xe61e8c, 0xff78c8];
+
+// The cover on an easel, in its grey poster frame. Faces -z.
 function tvGirlPoster(): Box[] {
+  const px = 0.4;
   const z = -1;
-  const pinkBg = 0xf7a8c8;
-  const blue = 0x3f6fd8;
-  return [
+  const left = (POSTER.length * px) / 2; // the picture reads towards -x
+  const top = 18.6;
+  const boxes: Box[] = [
     [-0.5, 0, -0.5, 1, 6, 1, 0x5d4037], // easel legs
     [-6, 0, -0.2, 1, 6, 1, 0x5d4037],
     [5, 0, -0.2, 1, 6, 1, 0x5d4037],
-    [-7, 5, z, 14, 16, 1.2, WHITE], // frame
-    [-6.5, 11, z - 0.1, 13, 9.5, 0.1, pinkBg], // pink background
-    [-6.5, 5.5, z - 0.1, 13, 5.5, 0.1, blue], // blue band
-    // face in profile, looking right on screen (towards -x)
-    [-2.5, 8, z - 0.2, 4, 7, 0.1, 0xffd9c9], // face
-    [-3.4, 11, z - 0.2, 1, 1.4, 0.1, 0xffd9c9], // nose
-    [-3, 9.2, z - 0.25, 1.4, 0.6, 0.1, 0xd81b60], // lips
-    [-2, 12.5, z - 0.25, 0.8, 0.5, 0.1, 0x1a237e], // eye
-    [0.5, 7, z - 0.2, 4, 10, 0.1, 0x1e2a78], // dark blue hair
-    [-2.8, 14.8, z - 0.2, 7.3, 1.6, 0.1, 0x1e2a78],
-    ...wallText("TV GIRL", 0, 18.5, z - 0.25, WHITE, 0.3, 0.1),
+    [-7, 5, z, 14, 14.4, 1.2, 0xb8b8b8], // grey poster
   ];
+  // one box per run of same-coloured pixels
+  POSTER.forEach((row, r) => {
+    let start = 0;
+    for (let c = 1; c <= row.length; c++) {
+      if (c === row.length || row[c] !== row[start]) {
+        boxes.push([left - c * px, top - (r + 1) * px, z - 0.1, (c - start) * px, px, 0.1, POSTER_COLORS[+row[start]]]);
+        start = c;
+      }
+    }
+  });
+  return boxes;
 }
 
 // Luidji, the Paris rapper, singing on stage: sunglasses, short beard, black
