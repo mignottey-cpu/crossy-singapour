@@ -43,14 +43,17 @@ export default class Grass extends Object3D {
   obstacleMap = {};
   requiredClearPositions: Set<number> = new Set();
 
-  addObstacle = (x) => {
+  addObstacle = (x, isWall = false) => {
     // Don't add obstacles at positions that must be clear for a winnable path
     if (this.requiredClearPositions.has(x | 0)) {
       return;
     }
 
     let mesh;
-    if (HAS_VARIETY) {
+    if (isWall) {
+      // HDB blocks and shophouses line the edges of the map
+      mesh = ModelLoader._building.getRandom();
+    } else if (HAS_VARIETY) {
       mesh =
         Math.random() < 0.4
           ? ModelLoader._boulder.getRandom()
@@ -83,7 +86,7 @@ export default class Grass extends Object3D {
       if (HAS_WALLS) {
         /// Walls
         if (x >= 9 || x <= -1) {
-          this.addObstacle(_x);
+          this.addObstacle(_x, true);
           continue;
         }
       }

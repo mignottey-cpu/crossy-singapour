@@ -1,16 +1,6 @@
-import Generic from './Generic';
+import Generic from "./Generic";
+import { lotus } from "../Singapore";
 
 export default class LilyPad extends Generic {
-  setup = async () => {
-    const {
-      environment: { lily_pad },
-    } = this.globalModels;
-
-    await this._register(`0`, {
-      ...lily_pad,
-      castShadow: true,
-      receiveShadow: true,
-    });
-    return this.models;
-  };
+  setup = async () => this._registerBuilt([lotus()]);
 }

@@ -81,6 +81,12 @@ export default class Generic {
     return (this.models[key] = await this._download(props));
   };
 
+  // Registers models that were built in code (see Singapore.ts) instead of loaded from files.
+  _registerBuilt = (models) => {
+    models.forEach((model, i) => (this.models[`${i}`] = model));
+    return this.models;
+  };
+
   _download = async (props) => {
     return await this._downloadAssets(props);
   };

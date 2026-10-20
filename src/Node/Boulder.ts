@@ -1,17 +1,6 @@
-import Generic from './Generic';
+import Generic from "./Generic";
+import { obstacles } from "../Singapore";
 
 export default class Boulder extends Generic {
-  setup = async () => {
-    const {
-      environment: { boulder },
-    } = this.globalModels;
-    for (let i = 0; i < 2; i++) {
-      await this._register(`${i}`, {
-        ...boulder[`${i}`],
-        castShadow: true,
-        receiveShadow: false,
-      });
-    }
-    return this.models;
-  };
+  setup = async () => this._registerBuilt(obstacles());
 }
