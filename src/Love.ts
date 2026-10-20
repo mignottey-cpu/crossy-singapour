@@ -156,21 +156,52 @@ function heartLamp(): Box[] {
   ];
 }
 
-// Rose bush with red and pink roses.
-function roseBush(): Box[] {
-  const boxes: Box[] = [
-    [-5, 0, -4, 10, 5, 8, 0x2e7d32],
-    [-4, 5, -3, 8, 3, 6, 0x388e3c],
-    [-2.5, 8, -2, 5, 2, 4, 0x43a047],
-  ];
-  const roses = [
-    [-4, 4, -4.4], [-1, 6, -3.4], [2.5, 3, -4.4], [3, 7, -3.4], [-3, 8.5, -2.4],
-    [0.5, 9.5, -2.4], [4.4, 2, -1], [-5.4, 3, 1], [1, 4, 3.4], [-1.5, 10, 0],
-  ];
-  roses.forEach(([x, y, z], i) => {
-    boxes.push([x, y, z, 1.6, 1.6, 1, i % 3 ? 0xd81b60 : 0xff80ab]);
+// Pile of record sleeves with a vinyl sticking out, and on top one of
+// Frank Ocean's albums lying flat: "channel ORANGE" (2012, plain orange with
+// the title in white) or "Blond" (2016, white sleeve, the title in black over
+// the photo of him with green hair, his hand on his face).
+function recordPile(top: Box[]): Box[] {
+  const sleeves = [0x5c6bc0, 0xf8bbd0, 0x26a69a, 0xffd54f, 0x8d6e63];
+  const boxes: Box[] = [];
+  sleeves.forEach((c, i) => {
+    const dx = ((i * 7) % 3) - 1;
+    const dz = ((i * 5) % 3) - 1;
+    boxes.push([-6 + dx * 0.6, i * 0.9, -6 + dz * 0.6, 12, 0.9, 12, c]);
   });
-  return boxes;
+  boxes.push([-7.5, 1.9, -4, 3, 0.4, 8, BLACK], [-8.2, 1.9, -2.5, 1, 0.4, 5, BLACK]); // record sticking out
+  boxes.push([-8.1, 1.95, -0.6, 0.6, 0.4, 1.2, PINK]);
+  return [...boxes, ...top];
+}
+
+const PILE_TOP = 4.5;
+
+function channelOrange(): Box[] {
+  const y = PILE_TOP;
+  return [
+    [-6, y, -6, 12, 0.3, 12, 0xee702c],
+    ...flatText("channel ORANGE", 0, y + 0.3, 2.5, WHITE, 0.14, 0.05),
+  ];
+}
+
+function blond(): Box[] {
+  const y = PILE_TOP;
+  const t = y + 0.3;
+  const skin = 0x6d4232;
+  return [
+    [-6, y, -6, 12, 0.3, 12, 0xeeeeee],
+    ...flatText("blond", 0, t, 4.6, 0x111111, 0.3, 0.05),
+    // the photo: grey tiled wall, green hair, a hand over his face
+    [-3.2, t, -5, 6.4, 0.05, 8.2, 0x8f8a84],
+    [-3.2, t + 0.01, -1, 6.4, 0.05, 0.12, 0x7a756f],
+    [-3.2, t + 0.01, 1.5, 6.4, 0.05, 0.12, 0x7a756f],
+    [-1.8, t + 0.02, -5, 4.8, 0.05, 3.2, skin], // shoulders
+    [-1, t + 0.03, -2, 2.6, 0.05, 2.4, skin], // face
+    [-1.1, t + 0.04, 0.2, 2.8, 0.05, 1.3, 0x7cc47a], // green hair
+    [-0.4, t + 0.05, -1.6, 1.6, 0.05, 1.8, 0x9c6650], // hand
+    [-1.5, t + 0.04, -3.6, 1, 0.05, 1.6, 0x9c6650], // arm
+    [-4.5, t, -5.7, 1.4, 0.05, 0.6, 0x222222], // barcode and advisory sticker
+    [3, t, -5.7, 1.5, 0.05, 0.7, 0x111111],
+  ];
 }
 
 // Retro microphone on a tall stand, like in jazz clubs.
@@ -214,7 +245,7 @@ function guitar(): Box[] {
   return boxes;
 }
 
-export const loveTrees = () => [heartLamp(), roseBush(), micStand(), guitar()].map((b) => voxelModel(b));
+export const loveTrees = () => [heartLamp(), recordPile(channelOrange()), recordPile(blond()), micStand(), guitar()].map((b) => voxelModel(b));
 
 // ---------- Obstacles (replace the boulders) ----------
 
