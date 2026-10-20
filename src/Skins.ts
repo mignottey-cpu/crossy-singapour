@@ -21,7 +21,7 @@ export const SKINS: Skin[] = [
   { id: "emo", name: "Emo Boy", price: 50 },
   { id: "nerd", name: "Nerd Boy", price: 75 },
   { id: "rich", name: "Rich Boy", price: 150 },
-  { id: "secret", name: "Secret", price: 300, revealedName: "Copine" },
+  { id: "secret", name: "Secret", price: 999, revealedName: "Copine" },
 ];
 
 export const DEFAULT_SKIN: SkinId = "pyjama";

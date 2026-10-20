@@ -51,6 +51,12 @@
         -webkit-touch-callout: none;
         -webkit-tap-highlight-color: transparent;
       }
+      /* ...except in the secret code field, which must stay typeable */
+      input {
+        -webkit-user-select: text;
+        user-select: text;
+        touch-action: manipulation;
+      }
     </style>
   </head>
 

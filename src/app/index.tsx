@@ -15,6 +15,7 @@ import CoinCounter from "@/components/CoinCounter";
 import Score from "@/components/ScoreText";
 import Engine from "@/GameEngine";
 import State from "@/state";
+import CodeScreen from "@/screens/CodeScreen";
 import CharacterSelectScreen from "@/screens/CharacterSelectScreen";
 import GameOverScreen from "@/screens/GameOverScreen";
 import HomeScreen from "@/screens/HomeScreen";
@@ -34,6 +35,7 @@ class Game extends Component {
     showSettings: false,
     showCharacterSelect: false,
     showShop: false,
+    showCodes: false,
     // gameState: State.Game.gameOver
   };
 
@@ -76,7 +78,7 @@ class Game extends Component {
     }
     const lastState = this.state.gameState;
 
-    this.setState(gameState === State.Game.playing ? { gameState, showShop: false } : { gameState });
+    this.setState(gameState === State.Game.playing ? { gameState, showShop: false, showCodes: false } : { gameState });
     this.engine.gameState = gameState;
     const { playing, gameOver, paused, none } = State.Game;
     switch (gameState) {
@@ -199,7 +201,7 @@ class Game extends Component {
   };
 
   renderHomeScreen = () => {
-    if (this.state.gameState !== State.Game.none || this.state.showShop) {
+    if (this.state.gameState !== State.Game.none || this.state.showShop || this.state.showCodes) {
       return null;
     }
 
@@ -214,6 +216,9 @@ class Game extends Component {
           }}
           onShop={() => {
             this.setState({ showShop: true });
+          }}
+          onCodes={() => {
+            this.setState({ showCodes: true });
           }}
         />
       </View>
@@ -283,6 +288,12 @@ class Game extends Component {
               setCharacter={this.props.setCharacter}
               onClose={() => this.setState({ showShop: false })}
             />
+          </View>
+        )}
+
+        {this.state.showCodes && this.state.gameState === State.Game.none && (
+          <View style={StyleSheet.absoluteFillObject}>
+            <CodeScreen onClose={() => this.setState({ showCodes: false })} />
           </View>
         )}
 

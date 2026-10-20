@@ -3,6 +3,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -132,6 +133,17 @@ function Screen(props) {
 
       {/* Skin shop, top left */}
       <SkinButton onPress={props.onShop} style={{ top: Math.max(top, 16), left: Math.max(left, 12) }} />
+
+      {/* Secret codes, under the skins */}
+      <Pressable
+        onPress={props.onCodes}
+        accessibilityLabel="Codes secrets"
+        style={[styles.codeButton, { top: Math.max(top, 16) + 96, left: Math.max(left, 12) }]}
+      >
+        <Text style={styles.codeIcon}>?</Text>
+        <Text style={styles.codeText}>CODES</Text>
+        <Text style={styles.codeText}>SECRETS</Text>
+      </Pressable>
     </View>
   );
 }
@@ -139,6 +151,17 @@ function Screen(props) {
 export default Screen;
 
 const styles = StyleSheet.create({
+  codeButton: {
+    position: "absolute",
+    width: 76,
+    alignItems: "center",
+    paddingVertical: 6,
+    backgroundColor: "#8e44ad",
+    borderWidth: 3,
+    borderColor: "#ffffff",
+  },
+  codeIcon: { color: "#ffd54f", fontFamily: "retro", fontSize: 26 },
+  codeText: { color: "white", fontFamily: "retro", fontSize: 10 },
   container: {
     flex: 1,
     alignItems: "center",
