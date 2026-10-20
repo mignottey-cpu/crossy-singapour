@@ -14,14 +14,11 @@ const C = {
   wood: 0x7a4a2a,
   woodLight: 0xb07a4a,
   coconut: 0x5c3a1e,
-  bougainvillea: 0xe0218a,
   stone: 0x9e9e9e,
   merlion: 0xf2efe6,
   merlionMane: 0xe0d6bf,
   eye: 0x222222,
   water: 0x6ec6ff,
-  durian: 0x9aa832,
-  durianSpike: 0x6f7d1f,
   gold: 0xf2c230,
   white: 0xffffff,
   lotusPad: 0x4caf50,
@@ -82,23 +79,41 @@ function rainTree(): Box[] {
   ];
 }
 
-function bougainvilleaBush(): Box[] {
-  return [
-    [-4, 0, -3, 8, 6, 6, C.leaf],
-    [-3, 6, -2, 6, 2, 4, C.leafLight],
-    [-4, 4, -3, 2, 2, 1, C.bougainvillea],
-    [1, 2, -3, 2, 2, 1, C.bougainvillea],
-    [-1, 7, -2, 2, 1, 2, C.bougainvillea],
-    [3, 3, 0, 1, 2, 2, C.bougainvillea],
-    [-4, 1, 1, 1, 2, 2, C.bougainvillea],
+// Pint of Tiger, the lager brewed in Singapore since 1932:
+// golden beer, thick white head running down the glass, blue and orange label.
+function beerGlass(): Box[] {
+  const glass = 0xd6eef5;
+  const boxes: Box[] = [
+    [-3, 0, -3, 6, 1, 6, glass], // thick glass base
+    [-3, 1, -3, 6, 4, 6, 0xe89c00],
+    [-3.5, 5, -3.5, 7, 4, 7, 0xf2ad10],
+    [-4, 9, -4, 8, 3, 8, 0xf7bf2e],
+    // label
+    [-3.6, 6, -3.6, 7.2, 2, 7.2, 0x1b2a5c],
+    [-3.65, 6.7, -3.65, 7.3, 0.6, 7.3, 0xf28c00],
+    // foam head overflowing
+    [-4.2, 12, -4.2, 8.4, 2, 8.4, 0xfffdf5],
+    [-3, 14, -2, 3, 1, 3, 0xfffdf5],
+    [0, 14, -1, 3, 1.5, 3, 0xfffdf5],
+    [-4.4, 10, 1, 0.4, 2.5, 1.2, 0xfffdf5],
+    [3.9, 10.5, -4.4, 1.2, 2, 0.4, 0xfffdf5],
+    // handle
+    [4, 4, -0.75, 2, 1, 1.5, glass],
+    [5, 4, -0.75, 1, 6, 1.5, glass],
+    [4, 9, -0.75, 2, 1, 1.5, glass],
   ];
+  // bubbles rising
+  for (const [x, y, z] of [[-3.1, 3, -1], [-3.6, 7, 1], [-4.1, 10, -2], [-3.1, 2, 2]]) {
+    boxes.push([x, y, z, 0.2, 0.5, 0.5, 0xffe9a8]);
+  }
+  return boxes;
 }
 
 export const trees = () => [
   voxelModel(supertree(30)),
   voxelModel(palmTree()),
   voxelModel(rainTree()),
-  voxelModel(bougainvilleaBush()),
+  voxelModel(beerGlass()),
 ];
 
 // ---------- Small obstacles (replace the boulders) ----------
@@ -122,22 +137,64 @@ function merlion(): Box[] {
   ];
 }
 
-function durian(): Box[] {
+// Professor in a tweed jacket pointing at a chalkboard with a stick.
+// Faces -z (the camera).
+function professor(): Box[] {
+  const jacket = 0x7a5c3e;
+  const skin = 0xf0c8a0;
+  const grey = 0xbdbdbd;
+  const chalk = 0xf0f0f0;
+  const wood = 0x8b5a2b;
   const boxes: Box[] = [
-    [-4, 0, -4, 8, 7, 8, C.durian],
-    [0, 7, 0, 1, 2, 1, C.wood], // stem
+    // chalkboard on an easel
+    [-4.8, 0, 0.8, 0.6, 4.5, 0.6, wood],
+    [0.6, 0, 0.8, 0.6, 4.5, 0.6, wood],
+    [-2.3, 0, 2.5, 0.6, 9, 0.6, wood],
+    [-5.3, 4.2, 0.6, 7.1, 8.6, 0.8, wood],
+    [-5, 4.5, 0.4, 6.5, 8, 0.5, 0x2f4f3a],
+    [-5, 4.1, 0, 6.5, 0.4, 0.8, wood], // chalk tray
+    [-1, 4.5, 0.05, 1, 0.3, 0.3, chalk],
+    // chalk writing: a formula and a little graph
+    [-4.5, 11, 0.3, 2.5, 0.4, 0.1, chalk],
+    [-1.5, 11, 0.3, 0.6, 0.4, 0.1, chalk],
+    [-0.5, 11, 0.3, 1.2, 0.4, 0.1, chalk],
+    [-4.5, 9.8, 0.3, 4, 0.4, 0.1, chalk],
+    [-4.3, 5.5, 0.3, 0.3, 3.3, 0.1, chalk], // graph axes
+    [-4.3, 5.5, 0.3, 4.3, 0.3, 0.1, chalk],
+    [-3.6, 5.9, 0.3, 0.8, 0.3, 0.1, 0xf7d046], // rising curve
+    [-2.8, 6.5, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    [-2, 7.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    [-1.2, 8.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    // professor
+    [2, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
+    [3.8, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
+    [2, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
+    [3.8, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
+    [1.8, 4.3, -3.3, 3.7, 4.5, 2, jacket],
+    [3.1, 6.8, -3.35, 1.1, 2, 0.1, 0xffffff], // shirt
+    [3.45, 5.8, -3.4, 0.4, 2.5, 0.1, 0xb71c1c], // tie
+    [2, 6, -3.35, 0.4, 0.8, 0.1, 0x5c4430], // elbow-patch style pocket
+    // left arm raised, holding the pointer towards the board
+    [0.9, 7, -3, 0.9, 2.5, 1.4, jacket],
+    [0.9, 9.5, -3, 0.9, 0.8, 1.2, skin],
+    [-3, 9.9, -2.6, 4, 0.3, 0.3, 0xd2a86e],
+    // right arm down, holding a book
+    [5.5, 4.8, -3, 0.9, 3.8, 1.4, jacket],
+    [5.5, 4.2, -3, 0.9, 0.7, 1.2, skin],
+    [5.3, 4.2, -3.8, 1.3, 1.8, 0.6, 0x1565c0],
+    // head, glasses, grey beard and hair
+    [2.1, 8.8, -3.6, 3.2, 3.2, 2.8, skin],
+    [2.3, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
+    [3.8, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
+    [2.45, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
+    [3.95, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
+    [2.2, 8.8, -3.75, 3, 1.1, 0.4, grey], // beard
+    [3, 9.6, -3.8, 1.4, 0.4, 0.3, grey], // moustache
+    [1.9, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
+    [5.2, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
+    [2.1, 11, -0.9, 3.2, 1.6, 0.4, grey],
+    [2.4, 12, -3.3, 2.6, 0.4, 2.2, grey],
   ];
-  // spikes on every side
-  for (const y of [1, 4]) {
-    for (const o of [-3, 1]) {
-      boxes.push([-5, y, o, 1, 2, 2, C.durianSpike]);
-      boxes.push([4, y, o, 1, 2, 2, C.durianSpike]);
-      boxes.push([o, y, -5, 2, 2, 1, C.durianSpike]);
-      boxes.push([o, y, 4, 2, 2, 1, C.durianSpike]);
-    }
-  }
-  boxes.push([-3, 7, -3, 2, 1, 2, C.durianSpike]);
-  boxes.push([1, 7, 1, 2, 1, 2, C.durianSpike]);
   return boxes;
 }
 
@@ -215,7 +272,7 @@ function examStack(): Box[] {
 
 export const obstacles = () => [
   voxelModel(merlion()),
-  voxelModel(durian()),
+  voxelModel(professor()),
   voxelModel(mirrorX(examPaper())),
   voxelModel(mirrorX(examStack())),
 ];
