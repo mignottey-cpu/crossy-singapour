@@ -14,7 +14,7 @@ import Colors from "@/Colors";
 import Images from "@/Images";
 import ModelLoader from "@/ModelLoader";
 import State from "@/state";
-import { getTheme, setTheme, Theme } from "@/Theme";
+import { getTheme, Mode, setTheme } from "@/Theme";
 import Button from "../Button";
 
 async function shareAsync() {
@@ -51,7 +51,7 @@ export default function Footer({
 
   // Switches to another look (or back to Singapore), then starts a new level.
   // Only the models change, so the gameplay stays exactly the same.
-  const toggleMode = async (mode: Theme) => {
+  const toggleMode = async (mode: Mode) => {
     if (switching) return;
     setSwitching(true);
     await setTheme(theme === mode ? "singapore" : mode);
@@ -59,7 +59,22 @@ export default function Footer({
     setGameState(State.Game.none);
   };
 
-  const modeButton = (mode: Theme, label: string) => (
+  // While the Copine skin is worn the love decor stays on: no mode to pick,
+  // changing skin brings the chosen mode back.
+  const loveBadge = (label: string) => (
+    <View style={[styles.modeButton, { width: modeWidth }]}>
+      <View style={[styles.modeInner, styles.loveInner]}>
+        <Text style={[styles.modeText, modeWidth < 130 && { fontSize: 10 }]} numberOfLines={1}>
+          {label}
+        </Text>
+      </View>
+    </View>
+  );
+
+  const modeButton = (mode: Mode, label: string) =>
+    theme === "love" ? (
+      loveBadge(mode === "exam" ? "MODE LOVE" : "SKIN COPINE")
+    ) : (
     <Pressable
       onPress={() => toggleMode(mode)}
       style={[styles.modeButton, { width: modeWidth }]}
@@ -136,6 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#4cb8f0",
   },
+  loveInner: { backgroundColor: "#ec407a" },
   modeText: {
     fontFamily: "retro",
     fontSize: 12,

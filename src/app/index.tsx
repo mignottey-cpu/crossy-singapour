@@ -22,6 +22,8 @@ import HomeScreen from "@/screens/HomeScreen";
 import SettingsScreen from "@/screens/SettingsScreen";
 import ShopScreen from "@/screens/ShopScreen";
 import GameContext from "@/context/GameContext";
+import ModelLoader from "@/ModelLoader";
+import { isLove, setLove } from "@/Theme";
 
 const DEBUG_CAMERA_CONTROLS = false;
 
@@ -47,8 +49,24 @@ class Game extends Component {
     }
     if (this.engine && nextProps.character !== this.props.character) {
       this.engine._hero.setCharacter(nextProps.character);
+      // the Copine skin brings its own decor; any other skin brings back the
+      // chosen mode
+      const love = nextProps.character === "secret";
+      if (love !== isLove()) {
+        setLove(love);
+        this.switchDecor();
+      }
     }
   }
+
+  // Rebuilds the level with the models of the current decor. On the game
+  // over screen the next game is built with them anyway.
+  switchDecor = async () => {
+    await ModelLoader.loadModels();
+    if (this.state.gameState === State.Game.none) {
+      this.transitionToGamePlayingState();
+    }
+  };
 
   transitionToGamePlayingState = () => {
     Animated.timing(this.transitionScreensValue, {

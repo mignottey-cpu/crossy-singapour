@@ -13,7 +13,8 @@ import {
 } from "./CrossyGame";
 import CrossyPlayer from "./CrossyPlayer";
 import { HAZE_COLOR } from "./Haze";
-import { isHaze } from "./Theme";
+import { LOVE_LIGHT, LOVE_SKY } from "./Love";
+import { isHaze, isLove } from "./Theme";
 import { addCoins } from "./Wallet";
 import {
   CAMERA_EASING,
@@ -39,6 +40,8 @@ export default class Engine {
     }
   };
 
+  clearColor = () => (isLove() ? LOVE_SKY : isHaze() ? HAZE_COLOR : sceneColor);
+
   setupGame = (character) => {
     this.scene = new CrossyScene({});
 
@@ -48,8 +51,12 @@ export default class Engine {
       this.scene.light.color.set(0xffd9a0);
       this.scene.light.intensity = 0.6;
     }
+    if (isLove()) {
+      // a warm pink night out
+      this.scene.light.color.set(LOVE_LIGHT);
+    }
     if (this.renderer) {
-      this.renderer.setClearColor(isHaze() ? HAZE_COLOR : sceneColor);
+      this.renderer.setClearColor(this.clearColor());
     }
 
     this.camera = new CrossyCamera();
@@ -420,7 +427,7 @@ export default class Engine {
       antialias: true,
       width,
       height,
-      clearColor: isHaze() ? HAZE_COLOR : sceneColor,
+      clearColor: this.clearColor(),
     });
 
     this.unpause();

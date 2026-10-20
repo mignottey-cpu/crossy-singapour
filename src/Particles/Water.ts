@@ -9,13 +9,14 @@ import {
   RingGeometry,
 } from "three";
 
-import { isExam } from "../Theme";
+import { WATER_SPLASH } from "../Love";
+import { isExam, isLove } from "../Theme";
 
 export default class Water {
   constructor() {
     this.waterMat = new MeshPhongMaterial({
       // splash in the colour of the water (ink blue in exam mode)
-      color: isExam() ? 0x5068c0 : 0x71d7ff,
+      color: isLove() ? WATER_SPLASH : isExam() ? 0x5068c0 : 0x71d7ff,
       // shading: FlatShading,
       flatShading: true,
     });

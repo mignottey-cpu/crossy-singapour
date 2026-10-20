@@ -12,13 +12,17 @@ import Coin from "./Node/Coin";
 import RailRoad from "./Node/RailRoad";
 import TrainLight from "./Node/TrainLight";
 import LilyPad from "./Node/LilyPad";
-import { restoreTheme } from "./Theme";
+import { restoreTheme, setLove } from "./Theme";
+import { getWallet, restoreWallet } from "./Wallet";
 
 class ModelLoader {
   // Called at start-up, and again when the player switches between the
   // Singapore and exam modes.
   loadModels = async () => {
     await restoreTheme();
+    // the love decor goes with the Copine skin
+    await restoreWallet();
+    setLove(getWallet().selected === "secret");
     this._lilyPad = new LilyPad();
     this._grass = new Grass();
     this._road = new Road();

@@ -3,6 +3,7 @@ import { vehicles as singaporeVehicles } from '../Singapore';
 import { voxelModel } from '../Voxel';
 import { examVehicles } from '../Exam';
 import { hazeVehicles } from '../Haze';
+import { loveVehicles } from '../Love';
 import { byTheme } from '../Theme';
 
 const cars = [
@@ -24,6 +25,7 @@ export default class Car extends Generic {
       singapore: singaporeVehicles,
       exam: examVehicles,
       haze: hazeVehicles,
+      love: loveVehicles,
     });
 
     for (let index in cars) {

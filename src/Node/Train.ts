@@ -4,6 +4,7 @@ import Generic from "./Generic";
 import { pelotonPieces } from "../Cycling";
 import { studentRushPieces } from "../Exam";
 import { mrtPieces } from "../Singapore";
+import { loveTrainPieces } from "../Love";
 import { byTheme } from "../Theme";
 
 export default class Train extends Generic {
@@ -46,6 +47,7 @@ export default class Train extends Generic {
       singapore: mrtPieces,
       exam: studentRushPieces,
       haze: () => pelotonPieces(true),
+      love: loveTrainPieces,
     })();
     return this.models;
   };

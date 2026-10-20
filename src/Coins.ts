@@ -1,5 +1,6 @@
 import { Box, voxelModel } from "./Voxel";
 import { wallText } from "./PixelFont";
+import { heartToken } from "./Love";
 import { byTheme } from "./Theme";
 
 // Coins to pick up. Each mode has its own look but every coin is worth one.
@@ -53,7 +54,7 @@ function cleanAirToken(): Box[] {
 }
 
 export const coin = () =>
-  voxelModel(byTheme({ singapore: sgDollar, exam: gradeToken, haze: cleanAirToken })(), {
+  voxelModel(byTheme({ singapore: sgDollar, exam: gradeToken, haze: cleanAirToken, love: () => heartToken(disc, bothFaces) })(), {
     castShadow: true,
     receiveShadow: false,
   });

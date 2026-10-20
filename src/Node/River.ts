@@ -1,10 +1,14 @@
 import Generic from './Generic';
 import { formulaRiver } from '../Exam';
 import { murkyRiver } from '../Haze';
-import { isExam, isHaze } from '../Theme';
+import { violetRiver } from '../Love';
+import { isExam, isHaze, isLove } from '../Theme';
 
 export default class River extends Generic {
   setup = async () => {
+    if (isLove()) {
+      return this._registerBuilt([violetRiver()]);
+    }
     if (isExam()) {
       return this._registerBuilt([formulaRiver()]);
     }

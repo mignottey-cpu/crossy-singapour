@@ -2,6 +2,7 @@ import Generic from "./Generic";
 import { boats } from "../Singapore";
 import { formulaStrips } from "../Exam";
 import { maskBoxRows } from "../Haze";
+import { vinylRows } from "../Love";
 import { byTheme } from "../Theme";
 
 // Logs are now dragon boats, or strips of paper with
@@ -9,6 +10,6 @@ import { byTheme } from "../Theme";
 // (keys 0-3 = 1 to 4 tiles long).
 export default class Log extends Generic {
   setup = async () => this._registerBuilt(
-      byTheme({ singapore: boats, exam: formulaStrips, haze: maskBoxRows })()
+      byTheme({ singapore: boats, exam: formulaStrips, haze: maskBoxRows, love: vinylRows })()
     );
 }
