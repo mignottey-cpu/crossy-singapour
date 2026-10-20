@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Banner from "@/components/GameOver/Banner";
 import Footer from "@/components/GameOver/Footer";
+import CodeButton from "@/components/CodeButton";
 import SkinButton from "@/components/SkinButton";
 import AudioManager from "@/AudioManager";
 import Characters from "@/Characters";
@@ -156,6 +157,7 @@ function GameOver({ ...props }) {
 
       {/* Skin shop, top right under the coins */}
       <SkinButton onPress={props.onShop} style={{ top: Math.max(top, 16) + 44, right: Math.max(right, 12) }} />
+      <CodeButton onPress={props.onCodes} style={{ top: Math.max(top, 16) + 44, right: Math.max(right, 12) + 84 }} />
     </View>
   );
 }

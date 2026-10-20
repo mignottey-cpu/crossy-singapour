@@ -3,7 +3,6 @@ import {
   Animated,
   Dimensions,
   Easing,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Hand from "@/components/HandCTA";
 import Footer from "@/components/Home/Footer";
+import CodeButton from "@/components/CodeButton";
 import SkinButton from "@/components/SkinButton";
 
 let hasShownTitle = false;
@@ -135,15 +135,7 @@ function Screen(props) {
       <SkinButton onPress={props.onShop} style={{ top: Math.max(top, 16), left: Math.max(left, 12) }} />
 
       {/* Secret codes, under the skins */}
-      <Pressable
-        onPress={props.onCodes}
-        accessibilityLabel="Codes secrets"
-        style={[styles.codeButton, { top: Math.max(top, 16) + 96, left: Math.max(left, 12) }]}
-      >
-        <Text style={styles.codeIcon}>?</Text>
-        <Text style={styles.codeText}>CODES</Text>
-        <Text style={styles.codeText}>SECRETS</Text>
-      </Pressable>
+      <CodeButton onPress={props.onCodes} style={{ top: Math.max(top, 16) + 96, left: Math.max(left, 12) }} />
     </View>
   );
 }
@@ -151,17 +143,6 @@ function Screen(props) {
 export default Screen;
 
 const styles = StyleSheet.create({
-  codeButton: {
-    position: "absolute",
-    width: 76,
-    alignItems: "center",
-    paddingVertical: 6,
-    backgroundColor: "#8e44ad",
-    borderWidth: 3,
-    borderColor: "#ffffff",
-  },
-  codeIcon: { color: "#ffd54f", fontFamily: "retro", fontSize: 26 },
-  codeText: { color: "white", fontFamily: "retro", fontSize: 10 },
   container: {
     flex: 1,
     alignItems: "center",

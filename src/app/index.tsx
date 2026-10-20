@@ -192,6 +192,9 @@ class Game extends Component {
           onShop={() => {
             this.setState({ showShop: true });
           }}
+          onCodes={() => {
+            this.setState({ showCodes: true });
+          }}
           setGameState={(state) => {
             this.updateWithGameState(state);
           }}
@@ -291,7 +294,7 @@ class Game extends Component {
           </View>
         )}
 
-        {this.state.showCodes && this.state.gameState === State.Game.none && (
+        {this.state.showCodes && this.state.gameState !== State.Game.playing && (
           <View style={StyleSheet.absoluteFillObject}>
             <CodeScreen onClose={() => this.setState({ showCodes: false })} />
           </View>
