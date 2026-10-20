@@ -11,9 +11,13 @@ import Building from "./Node/Building";
 import RailRoad from "./Node/RailRoad";
 import TrainLight from "./Node/TrainLight";
 import LilyPad from "./Node/LilyPad";
+import { restoreTheme } from "./Theme";
 
 class ModelLoader {
+  // Called at start-up, and again when the player switches between the
+  // Singapore and exam modes.
   loadModels = async () => {
+    await restoreTheme();
     this._lilyPad = new LilyPad();
     this._grass = new Grass();
     this._road = new Road();

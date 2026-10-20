@@ -2,7 +2,8 @@ import { Box, voxelModel } from "./Voxel";
 
 // Player character built from photos: messy dark-brown hair with a middle part,
 // thick eyebrows, light-blue linen shirt, blue/white striped trousers,
-// tan suede clogs and a black tote bag. Front faces +z (walking direction).
+// tan suede clogs and a black tote bag; in exam mode, a navy suit and a
+// briefcase. Front faces +z (walking direction).
 // The model is rescaled to 1 tile tall by CrossyPlayer, so units are arbitrary.
 
 const C = {
@@ -22,11 +23,18 @@ const C = {
   bag: 0x1d1d1d,
   strap: 0xeee4d0,
   necklace: 0xc0c0c0,
+  suit: 0x1f2a44,
+  suitShade: 0x161e33,
+  tie: 0x7b1e2b,
+  shoe: 0x111111,
+  briefcase: 0x6d4c41,
+  briefcaseDark: 0x3e2723,
 };
 
 const F = 3.5; // front of the head (z)
 
-function me(): Box[] {
+// Beach outfit: open linen shirt, striped trousers, clogs, tote bag.
+function beachOutfit(): Box[] {
   const boxes: Box[] = [
     // clogs
     [-3, 0, -1, 2, 1, 4, C.clog],
@@ -54,6 +62,48 @@ function me(): Box[] {
     [4.5, 3.5, -1, 1.5, 3.5, 3, C.bag],
     [4.5, 7, 0.3, 0.6, 3, 0.5, C.strap],
     [3, 9.8, 0.3, 2, 0.5, 0.5, C.strap],
+  ];
+  // blue and white striped trousers
+  for (const x0 of [-3, 1]) {
+    for (let i = 0; i < 4; i++) {
+      const color = i % 2 ? C.stripeWhite : C.stripeBlue;
+      boxes.push([x0 + i * 0.5, 1, 0, 0.5, 4, 2, color]);
+    }
+  }
+  return boxes;
+}
+
+// Exam outfit: navy suit, white shirt, tie, black shoes and a briefcase.
+function suitOutfit(): Box[] {
+  return [
+    [-3, 0, -1, 2, 1, 4, C.shoe],
+    [1, 0, -1, 2, 1, 4, C.shoe],
+    [-3, 1, 0, 2, 4.5, 2, C.suit], // trousers
+    [1, 1, 0, 2, 4.5, 2, C.suit],
+    [-3, 5, -0.5, 6, 5, 2.5, C.suit], // jacket
+    [-1, 6.5, 2, 2, 3.5, 0.2, C.white], // shirt
+    [-0.35, 6.2, 2.1, 0.7, 3.4, 0.25, C.tie],
+    [-1.6, 6.5, 2.05, 0.6, 3.5, 0.2, C.suitShade], // lapels
+    [1, 6.5, 2.05, 0.6, 3.5, 0.2, C.suitShade],
+    [-2.6, 7.5, 2.05, 0.8, 0.5, 0.2, C.white], // pocket square
+    [-2, 9.8, 1.8, 1, 0.6, 0.5, C.white], // collar
+    [1, 9.8, 1.8, 1, 0.6, 0.5, C.white],
+    [-4.5, 5.8, -0.25, 1.5, 4.2, 2, C.suit], // sleeves
+    [-4.5, 5.3, -0.25, 1.5, 0.5, 2, C.white], // cuffs
+    [-4.5, 4.5, -0.25, 1.5, 0.8, 2, C.skin],
+    [3, 5.8, -0.25, 1.5, 4.2, 2, C.suit],
+    [3, 5.3, -0.25, 1.5, 0.5, 2, C.white],
+    [3, 4.5, -0.25, 1.5, 0.8, 2, C.skin],
+    // leather briefcase in the right hand
+    [4.5, 1.5, -1.5, 1.2, 3.2, 4, C.briefcase],
+    [4.6, 4.7, -0.2, 0.8, 0.6, 1.4, C.briefcaseDark],
+    [4.4, 2.8, -1.5, 1.4, 0.3, 4, C.briefcaseDark],
+  ];
+}
+
+function me(outfit: "beach" | "suit"): Box[] {
+  const boxes: Box[] = [
+    ...(outfit === "suit" ? suitOutfit() : beachOutfit()),
     // neck
     [-1, 10, 0, 2, 1, 2, C.skin],
     // head
@@ -86,15 +136,8 @@ function me(): Box[] {
     [-2, 18.5, 2.5, 2, 1, 1.5, C.hairLight],
   ];
 
-  // blue and white striped trousers
-  for (const x0 of [-3, 1]) {
-    for (let i = 0; i < 4; i++) {
-      const color = i % 2 ? C.stripeWhite : C.stripeBlue;
-      boxes.push([x0 + i * 0.5, 1, 0, 0.5, 4, 2, color]);
-    }
-  }
   return boxes;
 }
 
-export const avatar = () =>
-  voxelModel(me(), { castShadow: true, receiveShadow: true });
+export const avatar = (outfit: "beach" | "suit" = "beach") =>
+  voxelModel(me(outfit), { castShadow: true, receiveShadow: true });

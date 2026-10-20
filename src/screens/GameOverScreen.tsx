@@ -25,11 +25,11 @@ const banner = [
   },
   {
     color: "#368FEB",
-    title: "Free Gift in 2h 51m",
+    title: "Retour a Paris",
   },
   {
     color: "#36D6EB",
-    title: "44 Coins To Go",
+    title: "Papa et maman sont pas contents",
   },
 ];
 

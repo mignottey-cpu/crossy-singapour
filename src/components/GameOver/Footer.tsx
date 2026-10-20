@@ -1,10 +1,19 @@
 import { isAvailableAsync } from "expo-sharing";
 import React, { useEffect, useState } from "react";
-import { LayoutAnimation, Share, StyleSheet, View } from "react-native";
+import {
+  LayoutAnimation,
+  Pressable,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import Colors from "@/Colors";
 import Images from "@/Images";
+import ModelLoader from "@/ModelLoader";
 import State from "@/state";
+import { getTheme, setTheme } from "@/Theme";
 import Button from "../Button";
 
 async function shareAsync() {
@@ -32,6 +41,18 @@ export default function Footer({
   navigation,
 }) {
   const [canShare, setCanShare] = useState(true);
+  const [switching, setSwitching] = useState(false);
+  const exam = getTheme() === "exam";
+
+  // Switches between the Singapore and exam looks, then starts a new level.
+  // Only the models change, so the gameplay stays exactly the same.
+  const toggleMode = async () => {
+    if (switching) return;
+    setSwitching(true);
+    await setTheme(exam ? "singapore" : "exam");
+    await ModelLoader.loadModels();
+    setGameState(State.Game.none);
+  };
 
   useEffect(() => {
     isAvailableAsync()
@@ -43,14 +64,13 @@ export default function Footer({
 
   return (
     <View style={[styles.container, style]}>
-      <Button
-        onPress={() => {
-          // showSettings();
-          alert("Settings pressed");
-        }}
-        imageStyle={[styles.button, { aspectRatio: 1.25 }]}
-        source={Images.button.settings}
-      />
+      <Pressable onPress={toggleMode} style={styles.modeButton}>
+        <View style={styles.modeInner}>
+          <Text style={styles.modeText} numberOfLines={1}>
+            {switching ? "..." : exam ? "MODE SG" : "MODE EXAM"}
+          </Text>
+        </View>
+      </Pressable>
       {canShare && (
         <Button
           onPress={shareAsync}
@@ -68,13 +88,8 @@ export default function Footer({
         ]}
         source={Images.button.long_play}
       />
-      <Button
-        onPress={() => {
-          alert("Leaderboard pressed");
-        }}
-        imageStyle={[styles.button, { aspectRatio: 1.25 }]}
-        source={Images.button.rank}
-      />
+      {/* keeps the play button centred now that the leaderboard is gone */}
+      <View style={styles.spacer} />
     </View>
   );
 }
@@ -93,5 +108,28 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 56,
+  },
+  modeButton: {
+    width: 140,
+    height: 56,
+    borderWidth: 2,
+    borderColor: "#173a57",
+    backgroundColor: "#ffffff",
+    padding: 3,
+  },
+  modeInner: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4cb8f0",
+  },
+  modeText: {
+    fontFamily: "retro",
+    fontSize: 12,
+    color: "white",
+    textAlign: "center",
+  },
+  spacer: {
+    width: 140,
   },
 });

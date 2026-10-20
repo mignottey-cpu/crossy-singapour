@@ -1,9 +1,10 @@
 import Characters from "../Characters";
 import Generic from "./Generic";
 import { avatar } from "../Avatar";
+import { isExam } from "../Theme";
 
 // Characters built in code instead of loaded from .obj files.
-const builtCharacters = { moi: avatar };
+const builtCharacters = { moi: () => avatar(isExam() ? "suit" : "beach") };
 
 export default class Hero extends Generic {
   setup = async () => {

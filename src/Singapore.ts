@@ -117,7 +117,7 @@ const deskItems = {
   ] as Box[],
 };
 
-const desks = () => [
+export const desks = () => [
   deskWithLamp(0xa0703c, 0x212121, deskItems.notebook),
   deskWithLamp(0xf2f2f2, 0xd32f2f, deskItems.mugAndLaptop),
 ];
@@ -151,7 +151,7 @@ function merlion(): Box[] {
 
 // Professor in a tweed jacket pointing at a chalkboard with a stick.
 // Faces -z (the camera).
-function professor(): Box[] {
+export function professor(): Box[] {
   const jacket = 0x7a5c3e;
   const skin = 0xf0c8a0;
   const grey = 0xbdbdbd;
@@ -218,7 +218,7 @@ const INK = 0x4f6fae;
 const RED_PEN = 0xd62828;
 
 // The game camera looks from -z, so pages are mirrored on x to read correctly.
-const mirrorX = (boxes: Box[]): Box[] =>
+export const mirrorX = (boxes: Box[]): Box[] =>
   boxes.map(([x, y, z, w, h, d, c]) => [-(x + w), y, z, w, h, d, c]);
 
 // Details drawn on the top sheet of a pile whose top is at height y.
@@ -247,7 +247,7 @@ function examSheetTop(y: number): Box[] {
 }
 
 // A pile of exam copies with a pencil lying on top.
-function examPaper(): Box[] {
+export function examPaper(): Box[] {
   const boxes: Box[] = [];
   for (let i = 0; i < 4; i++) {
     const o = i % 2 ? 0.3 : -0.3; // slightly messy pile
@@ -266,7 +266,7 @@ function examPaper(): Box[] {
 }
 
 // A tall stack of exams to mark, held by a black binder clip.
-function examStack(): Box[] {
+export function examStack(): Box[] {
   const boxes: Box[] = [];
   for (let i = 0; i < 12; i++) {
     const o = [0, 0.4, -0.3, 0.2][i % 4];
