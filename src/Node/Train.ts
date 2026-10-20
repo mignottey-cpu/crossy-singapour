@@ -1,6 +1,7 @@
 import { Box3, Group } from "three";
 
 import Generic from "./Generic";
+import { pelotonPieces } from "../Cycling";
 
 export default class Train extends Generic {
   getDepth = (mesh) => {
@@ -35,27 +36,9 @@ export default class Train extends Generic {
     return _train;
   };
 
+  // The train is now a peloton of cyclists (see Cycling.ts).
   setup = async () => {
-    const {
-      vehicles: { train },
-    } = this.globalModels;
-
-    await this._register("front", {
-      ...train[`front`],
-      receiveShadow: true,
-      castShadow: true,
-    });
-    await this._register("middle", {
-      ...train[`middle`],
-      receiveShadow: true,
-      castShadow: true,
-    });
-    await this._register("back", {
-      ...train[`back`],
-      receiveShadow: true,
-      castShadow: true,
-    });
-
+    this.models = pelotonPieces();
     return this.models;
   };
 }
