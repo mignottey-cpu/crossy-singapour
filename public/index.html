@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Phones: no pinch or double-tap zoom while playing, and use the whole
+         screen including the notch area (the game keeps its buttons in the
+         safe area). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Crossy Singapour</title>
+    <meta name="theme-color" content="#87C6FF" />
+    <!-- "Add to home screen" opens the game full screen, like an app. -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Crossy SG" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <link rel="icon" type="image/png" href="./icon-192.png" />
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+        margin: 0;
+        background-color: #87c6ff;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+      /* Touch screens: no scrolling, bouncing, zooming, text selection,
+         long-press menus or grey flash when tapping */
+      html,
+      body,
+      #root {
+        touch-action: none;
+        overscroll-behavior: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>Il faut activer JavaScript pour jouer.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

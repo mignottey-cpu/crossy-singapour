@@ -6,6 +6,7 @@ import {
   Share,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -43,6 +44,10 @@ export default function Footer({
   const [canShare, setCanShare] = useState(true);
   const [switching, setSwitching] = useState(false);
   const theme = getTheme();
+  // Mode buttons shrink on narrow phones so the footer always fits
+  // (the play button in the middle is about 110 px wide).
+  const { width } = useWindowDimensions();
+  const modeWidth = Math.max(96, Math.min(140, Math.floor((width - 130) / 2)));
 
   // Switches to another look (or back to Singapore), then starts a new level.
   // Only the models change, so the gameplay stays exactly the same.
@@ -55,9 +60,15 @@ export default function Footer({
   };
 
   const modeButton = (mode: Theme, label: string) => (
-    <Pressable onPress={() => toggleMode(mode)} style={styles.modeButton}>
+    <Pressable
+      onPress={() => toggleMode(mode)}
+      style={[styles.modeButton, { width: modeWidth }]}
+    >
       <View style={styles.modeInner}>
-        <Text style={styles.modeText} numberOfLines={1}>
+        <Text
+          style={[styles.modeText, modeWidth < 130 && { fontSize: 10 }]}
+          numberOfLines={1}
+        >
           {switching ? "..." : theme === mode ? "MODE SG" : label}
         </Text>
       </View>
@@ -113,7 +124,6 @@ const styles = StyleSheet.create({
     height: 56,
   },
   modeButton: {
-    width: 140,
     height: 56,
     borderWidth: 2,
     borderColor: "#173a57",
