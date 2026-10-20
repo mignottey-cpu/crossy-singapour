@@ -9,11 +9,7 @@ const C = {
   supertreeCanopy: 0xc0398f,
   supertreeRim: 0xff79c6,
   leaf: 0x3e8e41,
-  leafDark: 0x2e6b31,
   leafLight: 0x6abf4b,
-  wood: 0x7a4a2a,
-  woodLight: 0xb07a4a,
-  coconut: 0x5c3a1e,
   stone: 0x9e9e9e,
   merlion: 0xf2efe6,
   merlionMane: 0xe0d6bf,
@@ -21,8 +17,6 @@ const C = {
   water: 0x6ec6ff,
   gold: 0xf2c230,
   white: 0xffffff,
-  lotusPad: 0x4caf50,
-  lotusFlower: 0xf48fb1,
 };
 
 // ---------- Trees (replace the original trees) ----------
@@ -48,35 +42,6 @@ function supertree(height: number): Box[] {
   boxes.push([-6, top + 8, -5, 1, 1, 10, C.supertreeRim]);
   boxes.push([5, top + 8, -5, 1, 1, 10, C.supertreeRim]);
   return boxes;
-}
-
-function palmTree(): Box[] {
-  return [
-    [-1, 0, -1, 2, 8, 2, C.wood],
-    [0, 8, -1, 2, 8, 2, C.woodLight],
-    [-1, 16, -1, 2, 6, 2, C.wood],
-    // fronds
-    [-2, 22, -2, 4, 2, 4, C.leafDark],
-    [-6, 23, -1, 12, 1, 2, C.leaf],
-    [-1, 23, -6, 2, 1, 12, C.leaf],
-    [-7, 21, -1, 1, 2, 2, C.leaf],
-    [6, 21, -1, 1, 2, 2, C.leaf],
-    [-1, 21, -7, 2, 2, 1, C.leaf],
-    [-1, 21, 6, 2, 2, 1, C.leaf],
-    // coconuts
-    [-2, 20, -2, 1, 2, 1, C.coconut],
-    [1, 20, 1, 1, 2, 1, C.coconut],
-  ];
-}
-
-// Big umbrella-shaped rain tree, very common along Singapore's roads.
-function rainTree(): Box[] {
-  return [
-    [-1, 0, -1, 2, 10, 2, C.wood],
-    [-5, 10, -4, 10, 3, 8, C.leafDark],
-    [-4, 13, -3, 8, 2, 6, C.leaf],
-    [-2, 15, -2, 4, 1, 4, C.leafLight],
-  ];
 }
 
 // Pint of Tiger, the lager brewed in Singapore since 1932:
@@ -109,11 +74,58 @@ function beerGlass(): Box[] {
   return boxes;
 }
 
+// ---------- Desks lit by a lamp (replace the palm and rain trees) ----------
+
+// Anglepoise-style lamp: weighted base, two-part arm balanced by springs,
+// conical shade lighting a pool on the desk. Desk top is at y = 8.
+function deskWithLamp(desk: number, lamp: number, items: Box[]): Box[] {
+  const top = 8;
+  return [
+    // desk
+    [-6, top - 1, -4, 12, 1, 8, desk],
+    [-6, 0, -4, 1, top - 1, 1, desk],
+    [5, 0, -4, 1, top - 1, 1, desk],
+    [-6, 0, 3, 1, top - 1, 1, desk],
+    [5, 0, 3, 1, top - 1, 1, desk],
+    [-6, top - 3, 3, 12, 2, 1, desk], // back panel
+    // pool of warm light on the desk
+    [-4.5, top, -2.5, 6, 0.05, 5, 0xfff1a8],
+    // lamp
+    [2, top, 1, 3, 0.6, 3, lamp], // base
+    [3.2, top + 0.6, 2.2, 0.6, 5.5, 0.6, lamp], // lower arm
+    [3.9, top + 1.5, 2.2, 0.2, 3.5, 0.4, 0xb0b4b8], // spring
+    [-1.5, top + 6, 2.2, 5.3, 0.6, 0.6, lamp], // upper arm
+    [-1, top + 6.6, 2.3, 4, 0.2, 0.4, 0xb0b4b8], // spring
+    [-3, top + 3.6, 1.2, 3, 2.4, 2.6, lamp], // conical shade
+    [-3.5, top + 3.2, 0.7, 4, 0.6, 3.6, lamp], // flared rim
+    [-2.7, top + 3, 1.3, 2.4, 0.3, 2.4, 0xfff3b0], // glowing bulb
+    ...items,
+  ];
+}
+
+const deskItems = {
+  notebook: [
+    [-4, 8, -2, 3, 0.4, 4, 0xfafafa],
+    [-4, 8.4, -2, 3, 0.1, 4, 0x1e88e5],
+    [-0.5, 8, -1, 0.3, 0.3, 3, 0xf7c42b], // pencil
+  ] as Box[],
+  mugAndLaptop: [
+    [-4.5, 8, -2.5, 5, 0.5, 3.5, 0xc8ccd0], // closed laptop
+    [-3.5, 8, 1.5, 1.5, 2, 1.5, 0xffffff], // coffee mug
+    [-2, 8.6, 1.9, 0.5, 1, 0.6, 0xffffff],
+    [-3.3, 9.8, 1.7, 1.1, 0.1, 1.1, 0x5d3a1a],
+  ] as Box[],
+};
+
+const desks = () => [
+  deskWithLamp(0xa0703c, 0x212121, deskItems.notebook),
+  deskWithLamp(0xf2f2f2, 0xd32f2f, deskItems.mugAndLaptop),
+];
+
 export const trees = () => [
   voxelModel(supertree(30)),
-  voxelModel(palmTree()),
-  voxelModel(rainTree()),
   voxelModel(beerGlass()),
+  ...desks().map((boxes) => voxelModel(boxes)),
 ];
 
 // ---------- Small obstacles (replace the boulders) ----------
@@ -631,14 +643,65 @@ export const vehicles = {
   red_truck: singleDecker,
 };
 
-export const lotus = () =>
-  voxelModel(
-    [
-      [-4, 0, -4, 8, 1, 8, C.lotusPad],
-      [-1, 1, -1, 2, 2, 2, C.lotusFlower],
-      [-2, 1, 0, 1, 1, 1, C.lotusFlower],
-      [1, 1, -1, 1, 1, 1, C.lotusFlower],
-      [0, 3, 0, 1, 1, 1, C.gold],
-    ],
-    { castShadow: true, receiveShadow: true }
+// ---------- Marina Bay promenade (replaces the grass) ----------
+// Big grey granite slabs; on some rows timber decking takes over on one side,
+// like along the waterfront. The row is 25 tiles wide, top at y = 6.
+
+const GRANITE = [0xd5d2cb, 0xc9c5bd, 0xdcd9d2];
+const TIMBER = [0xa47148, 0x8f5f3a];
+
+export function promenade(variant: number) {
+  const H = 6;
+  const HALF = 200;
+  const boxes: Box[] = [[-HALF, 0, -8, HALF * 2, H - 0.1, 16, 0xbdb8ae]];
+  const slab = 32; // a slab is 2 tiles long
+  const deck = variant === 1;
+  const graniteDepth = deck ? 9 : 16;
+  const shift = variant === 0 ? 0 : 16; // stagger the joints between rows
+
+  for (let x = -HALF - shift, i = 0; x < HALF; x += slab, i++) {
+    const x0 = Math.max(x, -HALF);
+    const w = Math.min(x + slab, HALF) - x0;
+    boxes.push([x0 + 0.15, H - 0.2, -8 + 0.15, w - 0.3, 0.2, graniteDepth - 0.3, GRANITE[i % 3]]);
+  }
+  if (deck) {
+    // timber boardwalk planks
+    for (let x = -HALF, i = 0; x < HALF; x += 2, i++) {
+      boxes.push([x + 0.1, H - 0.2, 1.1, 1.8, 0.2, 6.8, TIMBER[i % 2]]);
+    }
+    boxes.push([-HALF, H - 0.25, 0.8, HALF * 2, 0.25, 0.3, 0x7a7a7a]); // steel edge
+  }
+  return voxelModel(boxes, { castShadow: false, receiveShadow: true });
+}
+
+// ---------- MacBooks floating on the water (replace the lily pads) ----------
+// Open laptop: aluminium unibody, black keyboard, display with the notch.
+// The screen stands at the back (+z) so the player can stand on the keyboard.
+
+function macbook(body: number): Box[] {
+  const boxes: Box[] = [
+    [-5.5, 0, -4, 11, 0.8, 7.5, body], // base
+    [-4.6, 0.8, -0.6, 9.2, 0.05, 3.6, 0x111111], // keyboard well
+    [-1.8, 0.8, -3.5, 3.6, 0.05, 2.4, 0xa9adb2], // trackpad
+    [-5.5, 0.8, 3.3, 11, 7, 0.5, body], // lid
+    [-5, 1.3, 3.2, 10, 6, 0.1, 0x101418], // display bezel
+    // macOS-like wallpaper
+    [-4.6, 1.6, 3.15, 9.2, 2.6, 0.1, 0x3949ab],
+    [-4.6, 4.2, 3.15, 9.2, 2.6, 0.1, 0x8e24aa],
+    [-2, 2.5, 3.1, 4, 2.5, 0.1, 0xec407a],
+    [-0.6, 6.8, 3.1, 1.2, 0.5, 0.1, 0x000000], // notch
+    [-4.6, 6.5, 3.1, 9.2, 0.3, 0.1, 0xdddddd], // menu bar
+  ];
+  // keys
+  for (let row = 0; row < 4; row++) {
+    for (let k = 0; k < 10; k++) {
+      boxes.push([-4.4 + k * 0.9, 0.85, -0.4 + row * 0.85, 0.7, 0.1, 0.65, 0x2b2b2b]);
+    }
+  }
+  return boxes;
+}
+
+export const macbooks = () =>
+  [0xc8ccd0, 0x6e7177].map((c) =>
+    voxelModel(macbook(c), { castShadow: true, receiveShadow: true })
   );

@@ -1,18 +1,7 @@
 import Generic from './Generic';
+import { promenade } from '../Singapore';
 
+// The grass is now the granite (and timber) promenade of Marina Bay.
 export default class Grass extends Generic {
-  setup = async () => {
-    const {
-      environment: { grass },
-    } = this.globalModels;
-
-    for (let i = 0; i < 2; i++) {
-      await this._register(`${i}`, {
-        ...grass[`${i}`],
-        castShadow: false,
-        receiveShadow: true,
-      });
-    }
-    return this.models;
-  };
+  setup = async () => this._registerBuilt([promenade(0), promenade(1), promenade(2)]);
 }

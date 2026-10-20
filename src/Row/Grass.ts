@@ -107,7 +107,7 @@ export default class Grass extends Object3D {
     this.onCollide = onCollide;
     const { _grass } = ModelLoader;
 
-    this.floor = _grass.getNode();
+    this.floor = _grass.getRandom();
     this.add(this.floor);
   }
 }
