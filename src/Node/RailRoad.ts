@@ -1,10 +1,14 @@
 import Generic from './Generic';
 import { cyclePath } from '../Cycling';
 import { examCorridor } from '../Exam';
-import { isExam } from '../Theme';
+import { mrtTrack } from '../Singapore';
+import { byTheme } from '../Theme';
 
-// The railroad is now a Park Connector cycling path (an exam hall corridor
-// in exam mode).
+// The railroad is now an MRT track (an exam hall corridor in exam mode, a
+// Park Connector cycling path in haze mode).
 export default class RailRoad extends Generic {
-  setup = async () => this._registerBuilt([isExam() ? examCorridor() : cyclePath()]);
+  setup = async () =>
+    this._registerBuilt([
+      byTheme({ singapore: mrtTrack, exam: examCorridor, haze: cyclePath })(),
+    ]);
 }

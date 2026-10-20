@@ -1,4 +1,5 @@
 import { Box, voxelModel } from "./Voxel";
+import { wallText } from "./PixelFont";
 
 // Voxel decor inspired by Singapore. Units are 1/16 of a tile (see Voxel.ts).
 // The camera looks from -z, so "front" details are placed on the -z side.
@@ -9,12 +10,24 @@ const C = {
   supertreeCanopy: 0xc0398f,
   supertreeRim: 0xff79c6,
   leaf: 0x3e8e41,
+  leafDark: 0x2e6b31,
   leafLight: 0x6abf4b,
+  wood: 0x7a4a2a,
+  woodLight: 0xb07a4a,
+  coconut: 0x5c3a1e,
   stone: 0x9e9e9e,
   merlion: 0xf2efe6,
   merlionMane: 0xe0d6bf,
   eye: 0x222222,
   water: 0x6ec6ff,
+  durian: 0x9aa832,
+  durianSpike: 0x6f7d1f,
+  lanternRed: 0xd7261e,
+  window: 0x2d4a6b,
+  roofTile: 0xb5482b,
+  boatHull: 0x8b2e1a,
+  boatTrim: 0xf2c230,
+  boatDeck: 0xc08a55,
   gold: 0xf2c230,
   white: 0xffffff,
 };
@@ -44,88 +57,62 @@ function supertree(height: number): Box[] {
   return boxes;
 }
 
-// Pint of Tiger, the lager brewed in Singapore since 1932:
-// golden beer, thick white head running down the glass, blue and orange label.
-function beerGlass(): Box[] {
-  const glass = 0xd6eef5;
-  const boxes: Box[] = [
-    [-3, 0, -3, 6, 1, 6, glass], // thick glass base
-    [-3, 1, -3, 6, 4, 6, 0xe89c00],
-    [-3.5, 5, -3.5, 7, 4, 7, 0xf2ad10],
-    [-4, 9, -4, 8, 3, 8, 0xf7bf2e],
-    // label
-    [-3.6, 6, -3.6, 7.2, 2, 7.2, 0x1b2a5c],
-    [-3.65, 6.7, -3.65, 7.3, 0.6, 7.3, 0xf28c00],
-    // foam head overflowing
-    [-4.2, 12, -4.2, 8.4, 2, 8.4, 0xfffdf5],
-    [-3, 14, -2, 3, 1, 3, 0xfffdf5],
-    [0, 14, -1, 3, 1.5, 3, 0xfffdf5],
-    [-4.4, 10, 1, 0.4, 2.5, 1.2, 0xfffdf5],
-    [3.9, 10.5, -4.4, 1.2, 2, 0.4, 0xfffdf5],
-    // handle
-    [4, 4, -0.75, 2, 1, 1.5, glass],
-    [5, 4, -0.75, 1, 6, 1.5, glass],
-    [4, 9, -0.75, 2, 1, 1.5, glass],
+function palmTree(): Box[] {
+  return [
+    [-1, 0, -1, 2, 8, 2, C.wood],
+    [0, 8, -1, 2, 8, 2, C.woodLight],
+    [-1, 16, -1, 2, 6, 2, C.wood],
+    // fronds
+    [-2, 22, -2, 4, 2, 4, C.leafDark],
+    [-6, 23, -1, 12, 1, 2, C.leaf],
+    [-1, 23, -6, 2, 1, 12, C.leaf],
+    [-7, 21, -1, 1, 2, 2, C.leaf],
+    [6, 21, -1, 1, 2, 2, C.leaf],
+    [-1, 21, -7, 2, 2, 1, C.leaf],
+    [-1, 21, 6, 2, 2, 1, C.leaf],
+    // coconuts
+    [-2, 20, -2, 1, 2, 1, C.coconut],
+    [1, 20, 1, 1, 2, 1, C.coconut],
   ];
-  // bubbles rising
-  for (const [x, y, z] of [[-3.1, 3, -1], [-3.6, 7, 1], [-4.1, 10, -2], [-3.1, 2, 2]]) {
-    boxes.push([x, y, z, 0.2, 0.5, 0.5, 0xffe9a8]);
+}
+
+// Big umbrella-shaped rain tree, very common along Singapore's roads.
+function rainTree(): Box[] {
+  return [
+    [-1, 0, -1, 2, 10, 2, C.wood],
+    [-5, 10, -4, 10, 3, 8, C.leafDark],
+    [-4, 13, -3, 8, 2, 6, C.leaf],
+    [-2, 15, -2, 4, 1, 4, C.leafLight],
+  ];
+}
+
+// Vanda Miss Joaquim, Singapore's national flower, in a terracotta pot:
+// rosy-violet petals around a broad violet lip with an orange centre.
+function orchidPot(): Box[] {
+  const boxes: Box[] = [
+    [-3, 0, -3, 6, 4, 6, 0xb5652f],
+    [-3.3, 3.5, -3.3, 6.6, 1, 6.6, 0xc87941],
+    [-2.5, 4, -2.5, 5, 0.3, 5, 0x5d4037], // soil
+  ];
+  const flower = (x: number, y: number, z: number): Box[] => [
+    [x - 1.5, y, z - 0.4, 3, 1, 0.8, 0xe8a1d5], // petals
+    [x - 0.5, y - 1, z - 0.4, 1, 3, 0.8, 0xe8a1d5],
+    [x - 0.9, y - 0.4, z - 0.6, 1.8, 1.8, 0.4, 0xb4489a], // lip
+    [x - 0.3, y + 0.1, z - 0.8, 0.6, 0.6, 0.3, 0xf08a3c],
+  ];
+  for (const [x, h, z] of [[-1.2, 11, -0.5], [1.4, 14, 0.4], [0, 8, 1]]) {
+    boxes.push([x - 0.2, 4, z - 0.2, 0.4, h - 4, 0.4, C.leaf]); // stems
+    boxes.push(...flower(x, h, z - 0.5), ...flower(x + 0.6, h - 2.5, z - 0.6));
   }
+  boxes.push([-2.8, 4, -0.4, 5.6, 0.6, 0.8, C.leafLight]); // strap leaves
   return boxes;
 }
 
-// ---------- Desks lit by a lamp (replace the palm and rain trees) ----------
-
-// Anglepoise-style lamp: weighted base, two-part arm balanced by springs,
-// conical shade lighting a pool on the desk. Desk top is at y = 8.
-function deskWithLamp(desk: number, lamp: number, items: Box[]): Box[] {
-  const top = 8;
-  return [
-    // desk
-    [-6, top - 1, -4, 12, 1, 8, desk],
-    [-6, 0, -4, 1, top - 1, 1, desk],
-    [5, 0, -4, 1, top - 1, 1, desk],
-    [-6, 0, 3, 1, top - 1, 1, desk],
-    [5, 0, 3, 1, top - 1, 1, desk],
-    [-6, top - 3, 3, 12, 2, 1, desk], // back panel
-    // pool of warm light on the desk
-    [-4.5, top, -2.5, 6, 0.05, 5, 0xfff1a8],
-    // lamp
-    [2, top, 1, 3, 0.6, 3, lamp], // base
-    [3.2, top + 0.6, 2.2, 0.6, 5.5, 0.6, lamp], // lower arm
-    [3.9, top + 1.5, 2.2, 0.2, 3.5, 0.4, 0xb0b4b8], // spring
-    [-1.5, top + 6, 2.2, 5.3, 0.6, 0.6, lamp], // upper arm
-    [-1, top + 6.6, 2.3, 4, 0.2, 0.4, 0xb0b4b8], // spring
-    [-3, top + 3.6, 1.2, 3, 2.4, 2.6, lamp], // conical shade
-    [-3.5, top + 3.2, 0.7, 4, 0.6, 3.6, lamp], // flared rim
-    [-2.7, top + 3, 1.3, 2.4, 0.3, 2.4, 0xfff3b0], // glowing bulb
-    ...items,
-  ];
-}
-
-const deskItems = {
-  notebook: [
-    [-4, 8, -2, 3, 0.4, 4, 0xfafafa],
-    [-4, 8.4, -2, 3, 0.1, 4, 0x1e88e5],
-    [-0.5, 8, -1, 0.3, 0.3, 3, 0xf7c42b], // pencil
-  ] as Box[],
-  mugAndLaptop: [
-    [-4.5, 8, -2.5, 5, 0.5, 3.5, 0xc8ccd0], // closed laptop
-    [-3.5, 8, 1.5, 1.5, 2, 1.5, 0xffffff], // coffee mug
-    [-2, 8.6, 1.9, 0.5, 1, 0.6, 0xffffff],
-    [-3.3, 9.8, 1.7, 1.1, 0.1, 1.1, 0x5d3a1a],
-  ] as Box[],
-};
-
-export const desks = () => [
-  deskWithLamp(0xa0703c, 0x212121, deskItems.notebook),
-  deskWithLamp(0xf2f2f2, 0xd32f2f, deskItems.mugAndLaptop),
-];
-
 export const trees = () => [
   voxelModel(supertree(30)),
-  voxelModel(beerGlass()),
-  ...desks().map((boxes) => voxelModel(boxes)),
+  voxelModel(palmTree()),
+  voxelModel(rainTree()),
+  voxelModel(orchidPot()),
 ];
 
 // ---------- Small obstacles (replace the boulders) ----------
@@ -149,145 +136,60 @@ export function merlion(): Box[] {
   ];
 }
 
-// Professor in a tweed jacket pointing at a chalkboard with a stick.
-// Faces -z (the camera).
-export function professor(): Box[] {
-  const jacket = 0x7a5c3e;
-  const skin = 0xf0c8a0;
-  const grey = 0xbdbdbd;
-  const chalk = 0xf0f0f0;
-  const wood = 0x8b5a2b;
+function durian(): Box[] {
   const boxes: Box[] = [
-    // chalkboard on an easel
-    [-4.8, 0, 0.8, 0.6, 4.5, 0.6, wood],
-    [0.6, 0, 0.8, 0.6, 4.5, 0.6, wood],
-    [-2.3, 0, 2.5, 0.6, 9, 0.6, wood],
-    [-5.3, 4.2, 0.6, 7.1, 8.6, 0.8, wood],
-    [-5, 4.5, 0.4, 6.5, 8, 0.5, 0x2f4f3a],
-    [-5, 4.1, 0, 6.5, 0.4, 0.8, wood], // chalk tray
-    [-1, 4.5, 0.05, 1, 0.3, 0.3, chalk],
-    // chalk writing: a formula and a little graph
-    [-4.5, 11, 0.3, 2.5, 0.4, 0.1, chalk],
-    [-1.5, 11, 0.3, 0.6, 0.4, 0.1, chalk],
-    [-0.5, 11, 0.3, 1.2, 0.4, 0.1, chalk],
-    [-4.5, 9.8, 0.3, 4, 0.4, 0.1, chalk],
-    [-4.3, 5.5, 0.3, 0.3, 3.3, 0.1, chalk], // graph axes
-    [-4.3, 5.5, 0.3, 4.3, 0.3, 0.1, chalk],
-    [-3.6, 5.9, 0.3, 0.8, 0.3, 0.1, 0xf7d046], // rising curve
-    [-2.8, 6.5, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
-    [-2, 7.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
-    [-1.2, 8.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
-    // professor
-    [2, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
-    [3.8, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
-    [2, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
-    [3.8, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
-    [1.8, 4.3, -3.3, 3.7, 4.5, 2, jacket],
-    [3.1, 6.8, -3.35, 1.1, 2, 0.1, 0xffffff], // shirt
-    [3.45, 5.8, -3.4, 0.4, 2.5, 0.1, 0xb71c1c], // tie
-    [2, 6, -3.35, 0.4, 0.8, 0.1, 0x5c4430], // elbow-patch style pocket
-    // left arm raised, holding the pointer towards the board
-    [0.9, 7, -3, 0.9, 2.5, 1.4, jacket],
-    [0.9, 9.5, -3, 0.9, 0.8, 1.2, skin],
-    [-3, 9.9, -2.6, 4, 0.3, 0.3, 0xd2a86e],
-    // right arm down, holding a book
-    [5.5, 4.8, -3, 0.9, 3.8, 1.4, jacket],
-    [5.5, 4.2, -3, 0.9, 0.7, 1.2, skin],
-    [5.3, 4.2, -3.8, 1.3, 1.8, 0.6, 0x1565c0],
-    // head, glasses, grey beard and hair
-    [2.1, 8.8, -3.6, 3.2, 3.2, 2.8, skin],
-    [2.3, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
-    [3.8, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
-    [2.45, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
-    [3.95, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
-    [2.2, 8.8, -3.75, 3, 1.1, 0.4, grey], // beard
-    [3, 9.6, -3.8, 1.4, 0.4, 0.3, grey], // moustache
-    [1.9, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
-    [5.2, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
-    [2.1, 11, -0.9, 3.2, 1.6, 0.4, grey],
-    [2.4, 12, -3.3, 2.6, 0.4, 2.2, grey],
+    [-4, 0, -4, 8, 7, 8, C.durian],
+    [0, 7, 0, 1, 2, 1, C.wood], // stem
   ];
+  // spikes on every side
+  for (const y of [1, 4]) {
+    for (const o of [-3, 1]) {
+      boxes.push([-5, y, o, 1, 2, 2, C.durianSpike]);
+      boxes.push([4, y, o, 1, 2, 2, C.durianSpike]);
+      boxes.push([o, y, -5, 2, 2, 1, C.durianSpike]);
+      boxes.push([o, y, 4, 2, 2, 1, C.durianSpike]);
+    }
+  }
+  boxes.push([-3, 7, -3, 2, 1, 2, C.durianSpike]);
+  boxes.push([1, 7, 1, 2, 1, 2, C.durianSpike]);
   return boxes;
 }
 
-// Exam papers: a header box for name / candidate number, a red margin,
-// lines of handwriting and the grade circled in red pen.
-const PAPER = 0xfbfaf5;
-const PAPER_SHADE = 0xe9e6dc;
-const INK = 0x4f6fae;
-const RED_PEN = 0xd62828;
-
-// The game camera looks from -z, so pages are mirrored on x to read correctly.
-export const mirrorX = (boxes: Box[]): Box[] =>
-  boxes.map(([x, y, z, w, h, d, c]) => [-(x + w), y, z, w, h, d, c]);
-
-// Details drawn on the top sheet of a pile whose top is at height y.
-function examSheetTop(y: number): Box[] {
-  const boxes: Box[] = [
-    [-3.5, y, 3, 7, 0.1, 2, PAPER_SHADE], // header box
-    [-3, y + 0.1, 4.2, 3.5, 0.05, 0.3, 0x555555], // name
-    [-3, y + 0.1, 3.4, 2, 0.05, 0.3, 0x555555], // candidate number
-    [-2.9, y, -5, 0.2, 0.1, 7.6, RED_PEN], // margin
-    // grade circled in red, top right corner
-    [1.8, y + 0.1, 3.1, 1.8, 0.1, 0.3, RED_PEN],
-    [1.8, y + 0.1, 4.5, 1.8, 0.1, 0.3, RED_PEN],
-    [1.6, y + 0.1, 3.3, 0.3, 0.1, 1.3, RED_PEN],
-    [3.5, y + 0.1, 3.3, 0.3, 0.1, 1.3, RED_PEN],
-    [2.3, y + 0.15, 3.6, 0.8, 0.1, 0.6, RED_PEN],
+// Red lantern like the ones in Chinatown for Chinese New Year.
+function lantern(): Box[] {
+  return [
+    [-3, 0, -3, 6, 1, 6, C.wood],
+    [-1, 1, -1, 2, 2, 2, C.wood],
+    [-3, 3, -3, 6, 1, 6, C.gold],
+    [-4, 4, -4, 8, 6, 8, C.lanternRed],
+    [-3, 10, -3, 6, 1, 6, C.gold],
+    [-1, 6, -5, 2, 2, 1, C.gold], // 福 badge
+    [-1, 11, -1, 2, 2, 2, C.gold],
   ];
-  // handwritten answer lines of different lengths
-  const lengths = [5.5, 6, 4, 5.8, 3, 6, 5, 2.5];
-  lengths.forEach((len, i) => {
-    boxes.push([-2.4, y, 2 - i, len, 0.08, 0.3, INK]);
-  });
-  // red ticks in the margin
-  boxes.push([-3.8, y + 0.1, 1.5, 0.6, 0.1, 0.3, RED_PEN]);
-  boxes.push([-3.8, y + 0.1, -1.5, 0.6, 0.1, 0.3, RED_PEN]);
-  return boxes;
 }
 
-// A pile of exam copies with a pencil lying on top.
-export function examPaper(): Box[] {
-  const boxes: Box[] = [];
-  for (let i = 0; i < 4; i++) {
-    const o = i % 2 ? 0.3 : -0.3; // slightly messy pile
-    boxes.push([-4 + o, i * 0.5, -5.5 - o, 8, 0.5, 11, i % 2 ? PAPER_SHADE : PAPER]);
-  }
-  const top = 2;
-  boxes.push(...examSheetTop(top));
-  boxes.push(
-    [3.2, top, -4, 0.8, 0.8, 5.5, 0xf7c42b], // pencil
-    [3.2, top, 1.5, 0.8, 0.8, 1, 0xe8c28e],
-    [3.4, top + 0.2, 2.5, 0.4, 0.4, 0.5, 0x333333],
-    [3.2, top, -4.6, 0.8, 0.8, 0.6, 0xc0c0c0],
-    [3.2, top, -5.5, 0.8, 0.8, 0.9, 0xf48fb1] // eraser
-  );
-  return boxes;
+// Hawker centre table: chicken rice, a kopi, and a packet of tissues to
+// "chope" (reserve) the seat. Faces -z.
+function hawkerTable(): Box[] {
+  return [
+    [-0.5, 0, -0.5, 1, 5, 1, 0x9e9e9e], // pedestal
+    [-4.5, 5, -3, 9, 0.6, 6, 0xf2f2ee], // round-ish marble top
+    [-3, 5, -4.5, 6, 0.6, 9, 0xf2f2ee],
+    [-6.5, 0, -1, 2, 3, 2, 0x1565c0], // stools
+    [4.5, 0, -1, 2, 3, 2, 0x1565c0],
+    [-3, 5.6, -2, 3.4, 0.3, 3.4, 0xffffff], // plate
+    [-2.6, 5.9, -1.6, 2.6, 1, 2.6, 0xfff8e1], // rice
+    [-0.4, 5.9, -1.8, 1.6, 0.6, 2.6, 0xf5d48a], // steamed chicken
+    [-2.8, 5.9, 0.6, 0.8, 0.4, 0.8, 0x7cb342], // cucumber
+    [1.4, 5.6, 1, 1.4, 2, 1.4, 0xffffff], // kopi in a cup
+    [1.5, 7.6, 1.1, 1.2, 0.1, 1.2, 0x6d4c41],
+    [1.2, 5.6, -2.2, 2.2, 0.6, 1.4, 0xfafafa], // tissue packet
+    [1.4, 6.2, -2, 1.8, 0.05, 1, 0x29b6f6],
+  ];
 }
 
-// A tall stack of exams to mark, held by a black binder clip.
-export function examStack(): Box[] {
-  const boxes: Box[] = [];
-  for (let i = 0; i < 12; i++) {
-    const o = [0, 0.4, -0.3, 0.2][i % 4];
-    boxes.push([-4 + o, i * 0.6, -5.5 + o / 2, 8, 0.6, 11, i % 3 ? PAPER : PAPER_SHADE]);
-  }
-  const top = 7.2;
-  boxes.push(...examSheetTop(top));
-  boxes.push(
-    [-1.5, top - 1.5, 5.4, 3, 1.8, 0.6, 0x1a1a1a], // binder clip
-    [-1.2, top + 0.3, 4.4, 0.3, 0.8, 1.5, 0xb0b4b8],
-    [0.9, top + 0.3, 4.4, 0.3, 0.8, 1.5, 0xb0b4b8]
-  );
-  return boxes;
-}
-
-export const obstacles = () => [
-  voxelModel(merlion()),
-  voxelModel(professor()),
-  voxelModel(mirrorX(examPaper())),
-  voxelModel(mirrorX(examStack())),
-];
+export const obstacles = () =>
+  [merlion(), durian(), hawkerTable(), lantern()].map((boxes) => voxelModel(boxes));
 
 // ---------- Towers (line the edges of the map) ----------
 
@@ -345,23 +247,91 @@ function pinnacleDuxton(): Box[] {
   return boxes;
 }
 
-// UOB Plaza One: octagonal granite tower with rotated cubes stacked on top.
-function uobPlaza(): Box[] {
-  const H = 38;
-  const granite = 0x9b9a9f;
-  const boxes: Box[] = [
-    // octagon = two overlapping boxes
-    [-5, 0, -3, 10, H, 6, granite],
-    [-3, 0, -5, 6, H, 10, granite],
-    // crown: smaller octagons stepping up
-    [-4, H, -2, 8, 4, 4, 0xb5b4b9],
-    [-2, H, -4, 4, 4, 8, 0xb5b4b9],
-    [-2, H + 4, -2, 4, 3, 4, granite],
-    [-0.5, H + 7, -0.5, 1, 4, 1, 0x666666], // mast
-  ];
-  boxes.push(...floorLines(-5, -3, 10, 6, 0, H, 3, 0x5f6b77));
-  boxes.push(...floorLines(-3, -5, 6, 10, 0, H, 3, 0x5f6b77));
+// Esplanade - Theatres on the Bay, "the durian": two domes covered in
+// spiky aluminium sunshades.
+function esplanade(): Box[] {
+  const shell = 0xd4c7a1;
+  const spike = 0x8f7f55;
+  const boxes: Box[] = [[-8, 0, -4.5, 16, 1.5, 9, 0xd8d2c4]];
+  // a low, wide dome made of thin slices, studded with pointed sunshades
+  const dome = (cx: number, r: number, h: number) => {
+    for (let i = 0; i < h; i++) {
+      const t = i / h;
+      const w = r * Math.sqrt(1 - t * t);
+      const d = w * 0.85;
+      boxes.push([cx - w, 1.5 + i, -d, w * 2, 1, d * 2, shell]);
+      for (let x = cx - w + 0.4 + (i % 2) * 0.8; x < cx + w - 0.6; x += 1.6) {
+        boxes.push([x, 1.7 + i, -d - 0.35, 0.7, 0.6, 0.35, spike]); // facing the bay
+      }
+    }
+    boxes.push([cx - 0.6, 1.5 + h, -0.6, 1.2, 0.5, 1.2, shell]);
+  };
+  dome(-2.5, 5.5, 9);
+  dome(4.6, 3.6, 6);
   return boxes;
+}
+
+// Singapore Flyer: the giant observation wheel on Marina Bay, with its
+// 28 capsules, on two legs above the terminal building. Faces -z.
+function singaporeFlyer(): Box[] {
+  const R = 11;
+  const cy = 26;
+  const boxes: Box[] = [
+    [-7, 0, -4, 14, 6, 8, 0xe0e4e8], // terminal
+    [-7, 6, -4, 14, 1, 8, 0x8fb7d4],
+    [-1.5, 6, -1, 1, 14, 1, 0xb0bec5], // legs
+    [0.5, 6, -1, 1, 14, 1, 0xb0bec5],
+    [-1, cy - 1, -1.2, 2, 2, 2.4, 0x90a4ae], // hub
+  ];
+  for (let i = 0; i < 28; i++) {
+    const a = (i / 28) * Math.PI * 2;
+    const x = Math.cos(a) * R;
+    const y = cy + Math.sin(a) * R;
+    boxes.push([x - 0.6, y - 0.6, -0.4, 1.2, 1.2, 0.8, 0xcfd8dc]); // rim
+    if (i % 2 === 0) {
+      const sx = Math.cos(a) * (R / 2);
+      const sy = cy + Math.sin(a) * (R / 2);
+      boxes.push([sx - 0.2, sy - 0.2, -0.2, 0.4, 0.4, 0.4, 0xb0bec5]); // spokes
+    }
+    boxes.push([x - 0.7, y - 1.6, -1.2, 1.4, 1.2, 1.2, 0xe3f2fd]); // capsules
+  }
+  return boxes;
+}
+
+const HDB_COLORS = [0xf6d55c, 0x7fc8a9, 0xf4a261, 0x9ad0ec, 0xe76f51];
+const SHOPHOUSE_COLORS = [0xf7b2bd, 0x9be3de, 0xffe29a, 0xb8e0a5, 0xc3aed6];
+
+// HDB public housing block: white tower with a colored stripe and windows.
+function hdbBlock(color: number): Box[] {
+  const floors = 7;
+  const boxes: Box[] = [
+    [-7, 0, -4, 14, floors * 4 + 2, 8, C.white],
+    [-7, 0, -4, 3, floors * 4 + 2, 8, color],
+    [-7, floors * 4 + 2, -4, 14, 2, 8, color], // roof
+  ];
+  for (let f = 0; f < floors; f++) {
+    for (const x of [-3, 0, 3]) {
+      boxes.push([x, f * 4 + 2, -5, 2, 2, 1, C.window]);
+    }
+  }
+  return boxes;
+}
+
+// Colorful Peranakan shophouse like in Joo Chiat or Chinatown.
+function shophouse(color: number): Box[] {
+  return [
+    [-7, 0, -4, 14, 14, 8, color],
+    [-7, 14, -4, 14, 3, 8, C.roofTile],
+    [-7, 0, -5, 14, 1, 1, C.white],
+    // door + windows with shutters
+    [-1, 1, -5, 2, 5, 1, C.wood],
+    [-5, 2, -5, 3, 3, 1, C.window],
+    [2, 2, -5, 3, 3, 1, C.window],
+    [-7, 7, -6, 14, 1, 2, C.white], // balcony
+    [-5, 9, -5, 2, 3, 1, C.leaf],
+    [-1, 9, -5, 2, 3, 1, C.leaf],
+    [3, 9, -5, 2, 3, 1, C.leaf],
+  ];
 }
 
 // Generic glass skyscraper of the CBD (Raffles Place), with a stepped top.
@@ -379,72 +349,66 @@ function cbdTower(glass: number, H: number): Box[] {
 export const buildings = () =>
   [
     marinaBaySands(),
+    esplanade(),
+    singaporeFlyer(),
     pinnacleDuxton(),
-    uobPlaza(),
+    hdbBlock(HDB_COLORS[0]),
+    hdbBlock(HDB_COLORS[1]),
+    shophouse(SHOPHOUSE_COLORS[0]),
+    shophouse(SHOPHOUSE_COLORS[2]),
     cbdTower(0x5d8fb5, 34),
-    cbdTower(0x7fa7a0, 28),
-    cbdTower(0x9fb8d6, 40),
   ].map((boxes) => voxelModel(boxes));
 
 // ---------- River (replace the logs and lily pads) ----------
 
-// Wads of Singapore dollar notes (Portrait series, first president
-// Yusof bin Ishak on the front) floating down the river, held by a bank band.
-// A platform 1 to 4 tiles long is a row of wads.
-const NOTES = [
-  { base: 0x7e57c2, light: 0xb39ddb }, // $2 purple
-  { base: 0x388e3c, light: 0x81c784 }, // $5 green
-  { base: 0xd32f2f, light: 0xef9a9a }, // $10 red
-  { base: 0x1565c0, light: 0x64b5f6 }, // $50 blue
-  { base: 0xef6c00, light: 0xffb74d }, // $100 orange
-];
-
-function wad(cx: number, note: { base: number; light: number }): Box[] {
-  const L = 15;
-  const D = 8;
-  const x0 = cx - L / 2;
-  const boxes: Box[] = [];
-  // a few notes stacked a bit messily
-  for (let i = 0; i < 3; i++) {
-    const o = [0, 0.4, -0.3][i];
-    boxes.push([x0 + o, 2 + i, -D / 2 - o / 2, L, 1, D, i % 2 ? note.light : note.base]);
-  }
-  const y = 5;
-  boxes.push(
-    [x0 + 0.5, y, -D / 2 + 0.5, L - 1, 0.1, D - 1, note.light], // inner frame
-    [x0 + 1, y + 0.05, -D / 2 + 1, L - 2, 0.1, D - 2, note.base],
-    // portrait of Yusof bin Ishak in an oval frame
-    [x0 + 1.5, y + 0.1, -2.2, 4, 0.1, 4.4, 0xe8dcc0],
-    [x0 + 2.2, y + 0.15, -1.4, 2.6, 0.1, 2.8, 0x8d6e63],
-    [x0 + 2.5, y + 0.2, 0.4, 2, 0.1, 1, 0x4e342e], // songkok
-    // silver holographic strip and the value in the corner
-    [x0 + 6.5, y + 0.1, -D / 2 + 0.5, 0.8, 0.1, D - 1, 0xcfd8dc],
-    [x0 + L - 4, y + 0.1, 1.5, 2.6, 0.1, 1.6, 0xffffff],
-    [x0 + L - 4, y + 0.1, -3, 1.6, 0.1, 1, 0xffffff],
-    [x0 + 9, y + 0.1, -0.8, 1.6, 0.1, 1.6, 0xf2c230], // coat of arms
-    // bank band around the wad
-    [cx + 2.5, 1.9, -D / 2 - 0.1, 2.5, y - 1.7, D + 0.2, 0xf5ecd7],
-    [cx + 2.5, y + 0.2, -D / 2 - 0.1, 2.5, 0.2, D + 0.2, 0xf5ecd7],
-    [cx + 3.4, y + 0.4, -D / 2 - 0.1, 0.7, 0.1, D + 0.2, 0xb71c1c],
-  );
-  return boxes;
-}
-
-function notes(tiles: number): Box[] {
+// Bumboat from the Singapore River, length in tiles (1-4).
+function bumboat(tiles: number): Box[] {
   const L = tiles === 4 ? 62 : tiles * 16;
-  const step = L / tiles;
-  const boxes: Box[] = [];
-  for (let i = 0; i < tiles; i++) {
-    const note = NOTES[(i * 2 + tiles) % NOTES.length];
-    boxes.push(...wad(-L / 2 + step * (i + 0.5), note));
-  }
-  return boxes;
+  const x0 = -L / 2;
+  return [
+    [x0 + 1, 0, -2, L - 2, 4, 6, C.boatHull],
+    [x0, 2, -2, 1, 4, 6, C.boatHull], // raised stern
+    [x0 + L - 1, 2, -2, 1, 4, 6, C.boatHull], // raised bow
+    [x0 + 1, 4, -2, L - 2, 1, 1, C.boatTrim],
+    [x0 + 1, 4, 3, L - 2, 1, 1, C.boatTrim],
+    [x0 + 1, 3, -1, L - 2, 1, 4, C.boatDeck],
+    // painted eyes on the bow, like real bumboats
+    [x0 + L - 4, 2, -3, 2, 2, 1, C.white],
+    [x0 + L - 3, 2, -3, 1, 1, 1, C.eye],
+    [x0 + L - 4, 2, 4, 2, 2, 1, C.white],
+    [x0 + L - 3, 2, 4, 1, 1, 1, C.eye],
+  ];
 }
 
-export const banknotes = () =>
+export const boats = () =>
   [1, 2, 3, 4].map((t) =>
-    voxelModel(notes(t), { castShadow: true, receiveShadow: true })
+    voxelModel(bumboat(t), { castShadow: true, receiveShadow: true })
   );
+
+// Little raft flying the Singapore flag (red over white, crescent and five
+// stars), like on National Day. The flag faces the camera (-z).
+function flagRaft(): Box[] {
+  const red = 0xdf0f2b;
+  return [
+    [-4, 0, -4, 8, 0.8, 8, 0xa47148],
+    [-4, 0.8, -1, 8, 0.1, 0.4, 0x7d5535], // planks
+    [-4, 0.8, 2, 8, 0.1, 0.4, 0x7d5535],
+    [3, 0.8, 2.6, 0.4, 9, 0.4, 0xdddddd], // pole
+    [-3, 7.5, 2.7, 6, 2, 0.2, red],
+    [-3, 5.5, 2.7, 6, 2, 0.2, 0xffffff],
+    [1.2, 7.8, 2.6, 1, 1.4, 0.1, 0xffffff], // crescent
+    [1.5, 8, 2.55, 0.8, 1.1, 0.1, red],
+    [0.1, 8.7, 2.6, 0.3, 0.3, 0.1, 0xffffff], // stars
+    [-0.5, 8.2, 2.6, 0.3, 0.3, 0.1, 0xffffff],
+    [-0.3, 7.9, 2.6, 0.3, 0.3, 0.1, 0xffffff],
+    [0.3, 7.9, 2.6, 0.3, 0.3, 0.1, 0xffffff],
+    [0.5, 8.3, 2.6, 0.3, 0.3, 0.1, 0xffffff],
+  ];
+}
+
+export const flagRafts = () => [
+  voxelModel(flagRaft(), { castShadow: true, receiveShadow: true }),
+];
 
 // ---------- Vehicles ----------
 // Vehicles are built along z with the front on +z; Road rotates them.
@@ -526,126 +490,88 @@ function singleDecker(): Box[] {
   ];
 }
 
-// ---------- Supercars (replace the regular cars) ----------
-// Low, wide and long (front on +z), like Crossy Road cars but sportier.
-
-const RIM = 0xb0b4b8;
-const INTAKE = 0x151515;
-
-function supercarBase(): Box[] {
+// Taxis: blue Comfort and yellow CityCab, with their roof sign.
+function taxi(body: number, sign: number): Box[] {
   return [
-    // wheels with silver rims
-    [-8, 0, -8, 16, 3, 4, WHEEL],
-    [-8, 0, 4, 16, 3, 4, WHEEL],
-    [-8.1, 0.8, -7, 0.2, 1.4, 2, RIM],
-    [7.9, 0.8, -7, 0.2, 1.4, 2, RIM],
-    [-8.1, 0.8, 5, 0.2, 1.4, 2, RIM],
-    [7.9, 0.8, 5, 0.2, 1.4, 2, RIM],
-    // diffuser
-    [-6, 1, -10.3, 12, 1, 0.4, INTAKE],
+    ...car(body, body),
+    [-2.5, 12, -1.5, 5, 1.8, 3, sign],
+    [-2, 12.4, -1.6, 4, 1, 3.2, 0xffffff],
   ];
 }
 
-// Ferrari-style: sculpted body in Rosso Corsa, rounded cabin, quad tail lights.
-function ferrari(): Box[] {
-  const red = 0xd40000;
+// Formula 1 car of the Singapore Grand Prix night race, in red and white.
+function f1Car(): Box[] {
+  const red = 0xd32f2f;
   return [
-    ...supercarBase(),
-    [-7.5, 1.5, -10, 15, 3.5, 20, red],
-    [-7, 5, 3, 14, 0.8, 7, red], // long sloping hood
-    [-6.5, 5, -4, 13, 3, 7, GLASS_DARK],
-    [-5.5, 8, -3, 11, 0.7, 5, red], // roof
-    [-7, 5, -10, 14, 1.5, 6, red], // engine cover
-    [-7.6, 2.5, -5, 0.3, 2, 3, INTAKE], // side intakes
-    [7.3, 2.5, -5, 0.3, 2, 3, INTAKE],
-    [-1.5, 1.5, 10, 3, 1.5, 0.3, INTAKE], // grille
-    [-6.5, 4, 10, 3, 1, 0.3, 0xfff6c8], // slim LED headlights
-    [3.5, 4, 10, 3, 1, 0.3, 0xfff6c8],
-    [-6, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030], // round quad tail lights
-    [-3.5, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
-    [2, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
-    [4.5, 4, -10.3, 1.5, 1.5, 0.3, 0xff3030],
-    [-0.5, 5.8, 9, 1, 0.3, 1, 0xffd400], // yellow badge on the hood
+    [-1.8, 0.8, -8, 3.6, 2.2, 15, red], // nose and body
+    [-4.5, 0.8, -5, 9, 2.4, 6, red], // sidepods
+    [-6, 0.6, 6, 12, 0.6, 2, 0x111111], // front wing
+    [-6, 4.5, -8, 12, 0.8, 2, red], // rear wing
+    [-6, 5.3, -8, 12, 0.3, 2, 0xffffff],
+    [-0.4, 3, -8, 0.8, 1.5, 1, 0x111111],
+    [-7.5, 0, 3, 2.5, 3.5, 3.5, 0x111111], // wheels
+    [5, 0, 3, 2.5, 3.5, 3.5, 0x111111],
+    [-7.5, 0, -7, 2.5, 4, 4, 0x111111],
+    [5, 0, -7, 2.5, 4, 4, 0x111111],
+    [-1, 3, -3, 2, 1, 3, 0x111111], // halo
+    [-0.8, 3.2, -2.5, 1.6, 1.4, 1.6, 0xffd400], // driver's helmet
+    [-1.82, 1.5, -2, 3.64, 0.8, 8, 0xffffff], // white stripe
   ];
 }
 
-// Lamborghini-style: sharp wedge, big rectangular side intakes, rear wing.
-function lamborghini(color: number): Box[] {
+// Ice cream uncle: motorbike with a sidecar cart, a rainbow umbrella and
+// "ice cream potong" slices.
+function iceCreamUncle(): Box[] {
   return [
-    ...supercarBase(),
-    [-7.5, 1.5, -10, 15, 2.5, 20, color],
-    [-7.5, 4, -10, 15, 1, 15, color], // wedge rises towards the back
-    [-7.5, 5, -10, 15, 1, 8, color],
-    [-6, 5, -3, 12, 2, 6, GLASS_DARK], // angular cabin
-    [-5, 7, -6, 10, 1.2, 6, GLASS_DARK],
-    [-5, 8.2, -6, 10, 0.5, 5, color],
-    [-7.7, 2.5, -8, 0.3, 3, 4, INTAKE], // huge side intakes
-    [7.4, 2.5, -8, 0.3, 3, 4, INTAKE],
-    [-7, 1.5, 10, 4, 1.5, 0.3, INTAKE], // front air curtains
-    [3, 1.5, 10, 4, 1.5, 0.3, INTAKE],
-    [-6.5, 3.2, 10, 3.5, 0.8, 0.3, 0xffffff], // Y-shaped lights
-    [3, 3.2, 10, 3.5, 0.8, 0.3, 0xffffff],
-    [-6.5, 4, -10.3, 4, 0.8, 0.3, 0xff3030],
-    [2.5, 4, -10.3, 4, 0.8, 0.3, 0xff3030],
-    [-6.5, 2.5, -10.3, 1, 1.5, 0.3, 0xff3030],
-    [5.5, 2.5, -10.3, 1, 1.5, 0.3, 0xff3030],
-    [-2, 7.5, -10, 0.6, 1.5, 1, INTAKE], // rear wing
-    [1.4, 7.5, -10, 0.6, 1.5, 1, INTAKE],
-    [-7, 9, -10.5, 14, 0.6, 2.5, INTAKE],
+    [1, 0, -7, 1.2, 3, 3, 0x111111], // bike wheels
+    [1, 0, 4, 1.2, 3, 3, 0x111111],
+    [0.8, 2, -6, 1.6, 2, 11, 0x37474f], // bike
+    [-6, 0, -2, 1.2, 2.5, 2.5, 0x111111], // cart wheel
+    [-7, 2, -5, 7, 5, 9, 0xd32f2f], // cart
+    [-7.05, 4, -5.05, 7.1, 1, 9.1, 0xffffff],
+    [-5.5, 7, -3.5, 4, 0.4, 3, 0xf8bbd0], // ice cream slices
+    [-5.5, 7, 0, 4, 0.4, 3, 0xfff59d],
+    [-3.7, 7, -0.5, 0.4, 8, 0.4, 0x9e9e9e], // umbrella pole
+    [-7.5, 15, -5, 3, 0.8, 10, 0xe53935], // umbrella
+    [-4.5, 15, -5, 3, 0.8, 10, 0xffeb3b],
+    [-1.5, 15, -5, 3, 0.8, 10, 0x1e88e5],
+    [0.5, 4, -2, 2, 3, 2, 0x5d6d7e], // uncle
+    [0.6, 7, -1.9, 1.8, 1.8, 1.8, 0xd9a066],
+    [0.4, 8.6, -2.1, 2.2, 0.6, 2.4, 0xeeeeee], // cap
   ];
 }
 
-// Porsche 911-style: rounded silver coupe, round headlights, ducktail.
-function porsche911(): Box[] {
-  const silver = 0xd9dde0;
-  return [
-    ...supercarBase(),
-    [-7.5, 1.5, -10, 15, 3.5, 20, silver],
-    [-6.5, 5, 3, 13, 0.8, 6, silver],
-    [-6, 5, -5, 12, 3.5, 8, GLASS_DARK],
-    [-5.5, 8.5, -4.5, 11, 0.7, 6, silver], // long sloping roof
-    [-6.5, 5, -10, 13, 1.5, 5, silver],
-    [-7, 6.5, -10.5, 14, 0.6, 2, silver], // ducktail spoiler
-    [-6.5, 3.5, 10, 2.5, 2.5, 0.3, 0xfff6c8], // round-ish headlights
-    [4, 3.5, 10, 2.5, 2.5, 0.3, 0xfff6c8],
-    [-7, 4, -10.3, 14, 0.8, 0.3, 0xff3030], // light bar across the back
+// Lorry carrying workers sitting in the back, a common sight on the roads.
+function workerLorry(): Box[] {
+  const boxes: Box[] = [
+    [-8, 0, -11, 16, 3, 4, WHEEL],
+    [-8, 0, 7, 16, 3, 4, WHEEL],
+    [-7, 2, 6, 14, 9, 7, 0xf5f5f5], // cab
+    [-6, 6, 12.8, 12, 3, 0.3, GLASS_DARK],
+    [-7.1, 3, 6, 14.2, 1, 7, 0x1e63c8],
+    [-7.5, 2, -13, 15, 2, 19, 0x6d6d6d], // flatbed
+    [-7.5, 4, -13, 0.6, 3, 19, 0x2e6da4], // sides
+    [6.9, 4, -13, 0.6, 3, 19, 0x2e6da4],
+    [-7.5, 4, -13, 15, 3, 0.6, 0x2e6da4],
   ];
-}
-
-// Bugatti Chiron-style: two-tone blue with the "C" line on the side.
-function bugatti(): Box[] {
-  const dark = 0x0b2a6f;
-  const light = 0x2f6fd8;
-  return [
-    ...supercarBase(),
-    [-7.5, 1.5, -10, 15, 3.5, 20, light],
-    [-7.5, 1.5, -10, 15, 3.5, 6, dark], // dark rear
-    [-7, 5, 3, 14, 0.8, 7, light],
-    [-6.5, 5, -4, 13, 3, 7, GLASS_DARK],
-    [-5.5, 8, -3, 11, 0.7, 5, dark],
-    [-7, 5, -10, 14, 1.5, 6, dark],
-    [-7.7, 2, -5, 0.3, 4, 0.6, RIM], // the chrome "C" curve
-    [-7.7, 5.4, -5, 0.3, 0.6, 5, RIM],
-    [7.4, 2, -5, 0.3, 4, 0.6, RIM],
-    [7.4, 5.4, -5, 0.3, 0.6, 5, RIM],
-    [-1.5, 1.5, 10, 3, 3, 0.4, RIM], // horseshoe grille
-    [-0.8, 2, 10.1, 1.6, 2, 0.4, INTAKE],
-    [-6.5, 3.5, 10, 3, 1.5, 0.3, 0xfff6c8],
-    [3.5, 3.5, 10, 3, 1.5, 0.3, 0xfff6c8],
-    [-7, 4, -10.3, 14, 0.6, 0.3, 0xff3030],
-  ];
+  for (const [x, z] of [[-4, -10], [3, -10], [-4, -3], [3, -3]]) {
+    boxes.push([x, 4, z, 2, 3, 2, 0xff8f00]); // hi-vis vests
+    boxes.push([x + 0.2, 7, z + 0.2, 1.6, 1.6, 1.6, 0x8d5524]);
+    boxes.push([x, 8.6, z, 2, 0.6, 2, 0xffd400]); // helmets
+  }
+  return boxes;
 }
 
 export const vehicles = {
-  police_car: ferrari,
-  blue_car: bugatti,
-  green_car: () => lamborghini(0x7bd400), // Verde Mantis
-  orange_car: () => lamborghini(0xff7a00), // Arancio
-  purple_car: porsche911,
+  police_car: () => taxi(0xffd400, 0x1565c0), // CityCab
+  blue_car: () => taxi(0x1e6fd9, 0x0d47a1), // Comfort
+  green_car: f1Car,
+  orange_car: iceCreamUncle,
+  purple_car: grabCar,
   taxi: grabCab,
-  grab_car: grabCar,
+  grab_car: singleDecker,
   blue_truck: doubleDecker,
-  red_truck: singleDecker,
+  red_truck: workerLorry,
 };
 
 // ---------- Marina Bay promenade (replaces the grass) ----------
@@ -686,34 +612,92 @@ export function promenadeBoxes(variant: number, colors = PROMENADE_COLORS): Box[
 export const promenade = (variant: number) =>
   voxelModel(promenadeBoxes(variant), { castShadow: false, receiveShadow: true });
 
-// ---------- MacBooks floating on the water (replace the lily pads) ----------
-// Open laptop: aluminium unibody, black keyboard, display with the notch.
-// The screen stands at the back (+z) so the player can stand on the keyboard.
+// ---------- MRT (replaces the railroad, train and crossing lights) ----------
+// Track with sleepers and a third rail, and an MRT train in the white livery
+// with the red and green band of the North South and East West lines.
 
-function macbook(body: number): Box[] {
+const MRT_BASE = 1.6; // the track is a bit higher than the train's ground level
+
+export function mrtTrack() {
+  const H = 8;
+  const W = 200;
   const boxes: Box[] = [
-    [-5.5, 0, -4, 11, 0.8, 7.5, body], // base
-    [-4.6, 0.8, -0.6, 9.2, 0.05, 3.6, 0x111111], // keyboard well
-    [-1.8, 0.8, -3.5, 3.6, 0.05, 2.4, 0xa9adb2], // trackpad
-    [-5.5, 0.8, 3.3, 11, 7, 0.5, body], // lid
-    [-5, 1.3, 3.2, 10, 6, 0.1, 0x101418], // display bezel
-    // macOS-like wallpaper
-    [-4.6, 1.6, 3.15, 9.2, 2.6, 0.1, 0x3949ab],
-    [-4.6, 4.2, 3.15, 9.2, 2.6, 0.1, 0x8e24aa],
-    [-2, 2.5, 3.1, 4, 2.5, 0.1, 0xec407a],
-    [-0.6, 6.8, 3.1, 1.2, 0.5, 0.1, 0x000000], // notch
-    [-4.6, 6.5, 3.1, 9.2, 0.3, 0.1, 0xdddddd], // menu bar
+    [-W, 0, -8, W * 2, H, 16, 0xb8b8b0],
+    [-W, H, -6, W * 2, 0.1, 12, 0x8a8580], // ballast
+    [-W, H + 0.3, -4.5, W * 2, 0.6, 0.6, 0x9ea4a8], // rails
+    [-W, H + 0.3, 3.5, W * 2, 0.6, 0.6, 0x9ea4a8],
+    [-W, H, 5.6, W * 2, 0.8, 0.8, 0xffd400], // third rail cover
   ];
-  // keys
-  for (let row = 0; row < 4; row++) {
-    for (let k = 0; k < 10; k++) {
-      boxes.push([-4.4 + k * 0.9, 0.85, -0.4 + row * 0.85, 0.7, 0.1, 0.65, 0x2b2b2b]);
-    }
+  for (let x = -W; x < W; x += 4) {
+    boxes.push([x, H, -5.5, 1.5, 0.3, 10, 0x707070]); // concrete sleepers
   }
+  return voxelModel(boxes, { castShadow: false, receiveShadow: true });
+}
+
+// One MRT car centred on x = 0; `cab` adds a driver's cab at that end.
+function mrtCar(cab: "none" | "front" | "back"): Box[] {
+  const y = MRT_BASE;
+  const L = 70;
+  const x0 = -L / 2;
+  const boxes: Box[] = [
+    [x0, y + 1, -5.5, L, 13, 11, 0xf4f4f4],
+    [x0, y + 14, -5, L, 1, 10, 0xcfd3d6], // roof
+    [x0, y + 5, -5.6, L, 1.2, 11.2, 0xd32f2f], // red band
+    [x0, y + 3.8, -5.6, L, 1.2, 11.2, 0x2e7d32], // green band
+    [x0 + 2, y + 7, -5.6, L - 4, 4, 11.2, 0x1c2833], // windows
+    [x0 + 6, y - 0.8, -4, 8, 1.8, 8, 0x222222], // bogies
+    [x0 + L - 14, y - 0.8, -4, 8, 1.8, 8, 0x222222],
+  ];
+  for (let x = x0 + 6; x < x0 + L - 4; x += 12) {
+    boxes.push([x, y + 7, -5.65, 1, 4, 11.3, 0xf4f4f4]); // window pillars
+  }
+  for (let x = x0 + 9; x < x0 + L - 6; x += 18) {
+    boxes.push([x, y + 1.5, -5.7, 4, 10, 0.2, 0xdfe3e6]); // doors (both sides)
+    boxes.push([x, y + 1.5, 5.5, 4, 10, 0.2, 0xdfe3e6]);
+  }
+  const nose = (x: number, dir: number): Box[] => [
+    [x, y + 1, -5, 2.5 * dir, 11, 10, 0xf4f4f4],
+    [x + 2.5 * dir - (dir > 0 ? 0.3 : 0), y + 6, -4, 0.3, 5, 8, 0x1c2833], // windscreen
+    [x + 2.5 * dir - (dir > 0 ? 0.3 : 0), y + 2.5, -4, 0.35, 1, 1.5, 0xfff6c8],
+    [x + 2.5 * dir - (dir > 0 ? 0.3 : 0), y + 2.5, 2.5, 0.35, 1, 1.5, 0xfff6c8],
+  ];
+  if (cab === "back") boxes.push(...nose(x0 + L, 1).map(fixNegative));
+  if (cab === "front") boxes.push(...nose(x0, -1).map(fixNegative));
   return boxes;
 }
 
-export const macbooks = () =>
-  [0xc8ccd0, 0x6e7177].map((c) =>
-    voxelModel(macbook(c), { castShadow: true, receiveShadow: true })
+// Boxes built with a negative width are turned into normal ones.
+const fixNegative = ([x, y, z, w, h, d, c]: Box): Box =>
+  w < 0 ? [x + w, y, z, -w, h, d, c] : [x, y, z, w, h, d, c];
+
+// The train is laid out along +x and moves towards +x: "front" is the tail
+// car and "back" leads, so each end gets a driver's cab.
+export const mrtPieces = () => ({
+  front: voxelModel(mrtCar("front")),
+  middle: voxelModel(mrtCar("none")),
+  back: voxelModel(mrtCar("back")),
+});
+
+// Red MRT sign on a post, with two lamps that flash when a train comes.
+// Faces +z here: the row turns it towards the camera.
+function mrtSign(left: boolean, right: boolean): Box[] {
+  const off = 0x5a5a5a;
+  const on = 0xff1744;
+  const text = wallText("MRT", 0, 18.5, 1.15, 0xffffff, 0.6, 0.15).map(
+    ([x, y, z, w, h, d, c]): Box => [-(x + w), y, z, w, h, d, c] // read from +z
   );
+  return [
+    [-0.5, 0, -0.5, 1, 23, 1, 0x9e9e9e],
+    [-4, 16, 0.4, 8, 5, 0.6, 0xd32f2f],
+    ...text,
+    [-2.5, 23, -1, 2, 1.5, 2, left ? on : off],
+    [0.5, 23, -1, 2, 1.5, 2, right ? on : off],
+    [-3, 22.5, -1, 6, 0.5, 2, 0x333333],
+  ];
+}
+
+export const mrtSigns = () => ({
+  inactive: voxelModel(mrtSign(false, false)),
+  active_0: voxelModel(mrtSign(true, false)),
+  active_1: voxelModel(mrtSign(false, true)),
+});

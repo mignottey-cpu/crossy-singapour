@@ -1,6 +1,5 @@
 import { Box, voxelModel } from "./Voxel";
 import { flatText, wallText } from "./PixelFont";
-import { desks, examPaper, examStack, mirrorX, professor } from "./Singapore";
 
 // "Exam" mode: the same level, but everything turns into student work.
 // Units are 1/16 of a tile (see Voxel.ts). Sizes match the Singapore models
@@ -93,7 +92,7 @@ export function formulaRiver() {
 }
 
 // Strips of exam paper with a formula, floating down the stream (replace the
-// banknotes). Length in tiles (1-4).
+// bumboats). Length in tiles (1-4).
 const FORMULAS = ["√2", "e=mc²", "∫f(x)dx", "a²+b²=c²"];
 
 function formulaStrip(tiles: number): Box[] {
@@ -242,6 +241,189 @@ export const examVehicles = {
   blue_truck: pencil,
   red_truck: textbooks,
 };
+
+// ---------- Desks lit by a lamp ----------
+
+// Anglepoise-style lamp: weighted base, two-part arm balanced by springs,
+// conical shade lighting a pool on the desk. Desk top is at y = 8.
+function deskWithLamp(desk: number, lamp: number, items: Box[]): Box[] {
+  const top = 8;
+  return [
+    // desk
+    [-6, top - 1, -4, 12, 1, 8, desk],
+    [-6, 0, -4, 1, top - 1, 1, desk],
+    [5, 0, -4, 1, top - 1, 1, desk],
+    [-6, 0, 3, 1, top - 1, 1, desk],
+    [5, 0, 3, 1, top - 1, 1, desk],
+    [-6, top - 3, 3, 12, 2, 1, desk], // back panel
+    // pool of warm light on the desk
+    [-4.5, top, -2.5, 6, 0.05, 5, 0xfff1a8],
+    // lamp
+    [2, top, 1, 3, 0.6, 3, lamp], // base
+    [3.2, top + 0.6, 2.2, 0.6, 5.5, 0.6, lamp], // lower arm
+    [3.9, top + 1.5, 2.2, 0.2, 3.5, 0.4, 0xb0b4b8], // spring
+    [-1.5, top + 6, 2.2, 5.3, 0.6, 0.6, lamp], // upper arm
+    [-1, top + 6.6, 2.3, 4, 0.2, 0.4, 0xb0b4b8], // spring
+    [-3, top + 3.6, 1.2, 3, 2.4, 2.6, lamp], // conical shade
+    [-3.5, top + 3.2, 0.7, 4, 0.6, 3.6, lamp], // flared rim
+    [-2.7, top + 3, 1.3, 2.4, 0.3, 2.4, 0xfff3b0], // glowing bulb
+    ...items,
+  ];
+}
+
+const deskItems = {
+  notebook: [
+    [-4, 8, -2, 3, 0.4, 4, 0xfafafa],
+    [-4, 8.4, -2, 3, 0.1, 4, 0x1e88e5],
+    [-0.5, 8, -1, 0.3, 0.3, 3, 0xf7c42b], // pencil
+  ] as Box[],
+  mugAndLaptop: [
+    [-4.5, 8, -2.5, 5, 0.5, 3.5, 0xc8ccd0], // closed laptop
+    [-3.5, 8, 1.5, 1.5, 2, 1.5, 0xffffff], // coffee mug
+    [-2, 8.6, 1.9, 0.5, 1, 0.6, 0xffffff],
+    [-3.3, 9.8, 1.7, 1.1, 0.1, 1.1, 0x5d3a1a],
+  ] as Box[],
+};
+
+export const desks = () => [
+  deskWithLamp(0xa0703c, 0x212121, deskItems.notebook),
+  deskWithLamp(0xf2f2f2, 0xd32f2f, deskItems.mugAndLaptop),
+];
+
+// ---------- Exam papers and the professor ----------
+
+// Professor in a tweed jacket pointing at a chalkboard with a stick.
+// Faces -z (the camera).
+export function professor(): Box[] {
+  const jacket = 0x7a5c3e;
+  const skin = 0xf0c8a0;
+  const grey = 0xbdbdbd;
+  const chalk = 0xf0f0f0;
+  const wood = 0x8b5a2b;
+  const boxes: Box[] = [
+    // chalkboard on an easel
+    [-4.8, 0, 0.8, 0.6, 4.5, 0.6, wood],
+    [0.6, 0, 0.8, 0.6, 4.5, 0.6, wood],
+    [-2.3, 0, 2.5, 0.6, 9, 0.6, wood],
+    [-5.3, 4.2, 0.6, 7.1, 8.6, 0.8, wood],
+    [-5, 4.5, 0.4, 6.5, 8, 0.5, 0x2f4f3a],
+    [-5, 4.1, 0, 6.5, 0.4, 0.8, wood], // chalk tray
+    [-1, 4.5, 0.05, 1, 0.3, 0.3, chalk],
+    // chalk writing: a formula and a little graph
+    [-4.5, 11, 0.3, 2.5, 0.4, 0.1, chalk],
+    [-1.5, 11, 0.3, 0.6, 0.4, 0.1, chalk],
+    [-0.5, 11, 0.3, 1.2, 0.4, 0.1, chalk],
+    [-4.5, 9.8, 0.3, 4, 0.4, 0.1, chalk],
+    [-4.3, 5.5, 0.3, 0.3, 3.3, 0.1, chalk], // graph axes
+    [-4.3, 5.5, 0.3, 4.3, 0.3, 0.1, chalk],
+    [-3.6, 5.9, 0.3, 0.8, 0.3, 0.1, 0xf7d046], // rising curve
+    [-2.8, 6.5, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    [-2, 7.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    [-1.2, 8.3, 0.3, 0.8, 0.3, 0.1, 0xf7d046],
+    // professor
+    [2, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
+    [3.8, 0, -3.5, 1.5, 0.8, 2.2, 0x1a1a1a],
+    [2, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
+    [3.8, 0.8, -3, 1.5, 3.5, 1.5, 0x3a3a44],
+    [1.8, 4.3, -3.3, 3.7, 4.5, 2, jacket],
+    [3.1, 6.8, -3.35, 1.1, 2, 0.1, 0xffffff], // shirt
+    [3.45, 5.8, -3.4, 0.4, 2.5, 0.1, 0xb71c1c], // tie
+    [2, 6, -3.35, 0.4, 0.8, 0.1, 0x5c4430], // elbow-patch style pocket
+    // left arm raised, holding the pointer towards the board
+    [0.9, 7, -3, 0.9, 2.5, 1.4, jacket],
+    [0.9, 9.5, -3, 0.9, 0.8, 1.2, skin],
+    [-3, 9.9, -2.6, 4, 0.3, 0.3, 0xd2a86e],
+    // right arm down, holding a book
+    [5.5, 4.8, -3, 0.9, 3.8, 1.4, jacket],
+    [5.5, 4.2, -3, 0.9, 0.7, 1.2, skin],
+    [5.3, 4.2, -3.8, 1.3, 1.8, 0.6, 0x1565c0],
+    // head, glasses, grey beard and hair
+    [2.1, 8.8, -3.6, 3.2, 3.2, 2.8, skin],
+    [2.3, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
+    [3.8, 10.1, -3.7, 1.3, 0.9, 0.1, 0x222222],
+    [2.45, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
+    [3.95, 10.25, -3.75, 1, 0.6, 0.1, 0xcfe8f0],
+    [2.2, 8.8, -3.75, 3, 1.1, 0.4, grey], // beard
+    [3, 9.6, -3.8, 1.4, 0.4, 0.3, grey], // moustache
+    [1.9, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
+    [5.2, 10.4, -3.4, 0.3, 1.6, 2.8, grey],
+    [2.1, 11, -0.9, 3.2, 1.6, 0.4, grey],
+    [2.4, 12, -3.3, 2.6, 0.4, 2.2, grey],
+  ];
+  return boxes;
+}
+
+// Exam papers: a header box for name / candidate number, a red margin,
+// lines of handwriting and the grade circled in red pen.
+const SHEET = 0xfbfaf5;
+const SHEET_SHADE = 0xe9e6dc;
+const SHEET_INK = 0x4f6fae;
+const RED_PEN = 0xd62828;
+
+// The game camera looks from -z, so pages are mirrored on x to read correctly.
+export const mirrorX = (boxes: Box[]): Box[] =>
+  boxes.map(([x, y, z, w, h, d, c]) => [-(x + w), y, z, w, h, d, c]);
+
+// Details drawn on the top sheet of a pile whose top is at height y.
+function examSheetTop(y: number): Box[] {
+  const boxes: Box[] = [
+    [-3.5, y, 3, 7, 0.1, 2, SHEET_SHADE], // header box
+    [-3, y + 0.1, 4.2, 3.5, 0.05, 0.3, 0x555555], // name
+    [-3, y + 0.1, 3.4, 2, 0.05, 0.3, 0x555555], // candidate number
+    [-2.9, y, -5, 0.2, 0.1, 7.6, RED_PEN], // margin
+    // grade circled in red, top right corner
+    [1.8, y + 0.1, 3.1, 1.8, 0.1, 0.3, RED_PEN],
+    [1.8, y + 0.1, 4.5, 1.8, 0.1, 0.3, RED_PEN],
+    [1.6, y + 0.1, 3.3, 0.3, 0.1, 1.3, RED_PEN],
+    [3.5, y + 0.1, 3.3, 0.3, 0.1, 1.3, RED_PEN],
+    [2.3, y + 0.15, 3.6, 0.8, 0.1, 0.6, RED_PEN],
+  ];
+  // handwritten answer lines of different lengths
+  const lengths = [5.5, 6, 4, 5.8, 3, 6, 5, 2.5];
+  lengths.forEach((len, i) => {
+    boxes.push([-2.4, y, 2 - i, len, 0.08, 0.3, SHEET_INK]);
+  });
+  // red ticks in the margin
+  boxes.push([-3.8, y + 0.1, 1.5, 0.6, 0.1, 0.3, RED_PEN]);
+  boxes.push([-3.8, y + 0.1, -1.5, 0.6, 0.1, 0.3, RED_PEN]);
+  return boxes;
+}
+
+// A pile of exam copies with a pencil lying on top.
+export function examPaper(): Box[] {
+  const boxes: Box[] = [];
+  for (let i = 0; i < 4; i++) {
+    const o = i % 2 ? 0.3 : -0.3; // slightly messy pile
+    boxes.push([-4 + o, i * 0.5, -5.5 - o, 8, 0.5, 11, i % 2 ? SHEET_SHADE : SHEET]);
+  }
+  const top = 2;
+  boxes.push(...examSheetTop(top));
+  boxes.push(
+    [3.2, top, -4, 0.8, 0.8, 5.5, 0xf7c42b], // pencil
+    [3.2, top, 1.5, 0.8, 0.8, 1, 0xe8c28e],
+    [3.4, top + 0.2, 2.5, 0.4, 0.4, 0.5, 0x333333],
+    [3.2, top, -4.6, 0.8, 0.8, 0.6, 0xc0c0c0],
+    [3.2, top, -5.5, 0.8, 0.8, 0.9, 0xf48fb1] // eraser
+  );
+  return boxes;
+}
+
+// A tall stack of exams to mark, held by a black binder clip.
+export function examStack(): Box[] {
+  const boxes: Box[] = [];
+  for (let i = 0; i < 12; i++) {
+    const o = [0, 0.4, -0.3, 0.2][i % 4];
+    boxes.push([-4 + o, i * 0.6, -5.5 + o / 2, 8, 0.6, 11, i % 3 ? SHEET : SHEET_SHADE]);
+  }
+  const top = 7.2;
+  boxes.push(...examSheetTop(top));
+  boxes.push(
+    [-1.5, top - 1.5, 5.4, 3, 1.8, 0.6, 0x1a1a1a], // binder clip
+    [-1.2, top + 0.3, 4.4, 0.3, 0.8, 1.5, 0xb0b4b8],
+    [0.9, top + 0.3, 4.4, 0.3, 0.8, 1.5, 0xb0b4b8]
+  );
+  return boxes;
+}
 
 // ---------- Decor on the paper (replace trees and obstacles) ----------
 
