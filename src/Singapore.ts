@@ -705,7 +705,9 @@ export function mrtTrack() {
 // One MRT car centred on x = 0; `cab` adds a driver's cab at that end.
 function mrtCar(cab: "none" | "front" | "back"): Box[] {
   const y = MRT_BASE;
-  const L = 70;
+  // The train lines its cars up every whole number of tiles: a car is a bit
+  // shorter than 4 tiles so cars do not overlap and leave a small gap.
+  const L = 62;
   const x0 = -L / 2;
   const boxes: Box[] = [
     [x0, y + 1, -5.5, L, 13, 11, 0xf4f4f4],

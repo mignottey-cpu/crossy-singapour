@@ -205,6 +205,8 @@ export default class Engine {
 
     const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
 
+    // remembered in case the move is blocked and the player stays on board
+    const wasRidingOn = this._hero.ridingOn;
     this._hero.ridingOn = null;
 
     if (!this._hero.initialPosition) {
@@ -344,11 +346,15 @@ export default class Engine {
         z: this._hero.initialPosition.z,
       };
       this._hero.moving = false;
+      // Jump in place: stay on the boat or raft instead of being dropped
+      // into the water, and land at the height of the current row.
+      this._hero.ridingOn = wasRidingOn;
+      velocity = { x: 0, z: 0 };
     }
 
     const targetRow =
       this.gameMap.getRow(this._hero.initialPosition.z + velocity.z) || {};
-    let finalY = targetRow.entity.top || groundLevel;
+    let finalY = (targetRow.entity && targetRow.entity.top) || groundLevel;
     // If the next move is into the river, then we want to jump into it.
     if (targetRow.type === "water") {
       const ridable = targetRow.entity.getRidableForPosition(

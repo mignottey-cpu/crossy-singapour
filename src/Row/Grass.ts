@@ -67,6 +67,14 @@ export default class Grass extends Object3D {
     mesh.position.set(x, groundLevel, 0);
   };
 
+  // Removes the obstacle at x (used to keep a way forward open).
+  removeObstacle = (x: number) => {
+    const entry = this.obstacleMap[`${x}`];
+    if (!entry) return;
+    this.floor.remove(this.entities[entry.index].mesh);
+    delete this.obstacleMap[`${x}`];
+  };
+
   // Returns all x positions that have obstacles
   getBlockedPositions = (): number[] => {
     return Object.keys(this.obstacleMap).map((k) => parseInt(k, 10));

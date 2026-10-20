@@ -12,7 +12,7 @@ import {
 import * as THREE from "three";
 
 import AudioManager from "./AudioManager";
-import { MAP_OFFSET, maxRows } from "./GameSettings";
+import { MAP_OFFSET, maxRows, startingRow } from "./GameSettings";
 import Feathers from "./Particles/Feathers";
 import Water from "./Particles/Water";
 import Rows from "./Row";
@@ -197,7 +197,15 @@ export class EntityContainer {
   count = 0;
 }
 
+// Columns of the playable area (the walls start at x = 5).
+const COLUMNS = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+
 export class CrossyGameMap extends GameMap {
+  // Columns of the last generated row that the player can reach from the
+  // start. Each new row is built so that this never becomes empty: there is
+  // always a way forward.
+  reachable: number[] = COLUMNS;
+
   grasses = new EntityContainer();
   water = new EntityContainer();
   roads = new EntityContainer();
@@ -235,18 +243,20 @@ export class CrossyGameMap extends GameMap {
     }
   }
 
-  // Helper to get clear positions (positions without obstacles) from a grass row
-  getClearPositionsFromGrass = (grassEntity): number[] => {
-    const blockedPositions = grassEntity.getBlockedPositions();
-    const blockedSet = new Set(blockedPositions);
-    // Playable x range is typically -4 to 4 (center area)
-    const clearPositions: number[] = [];
-    for (let x = -4; x <= 4; x++) {
-      if (!blockedSet.has(x)) {
-        clearPositions.push(x);
+  // Columns of a grass row the player can reach: free cells right above a
+  // reachable cell, plus everything walkable sideways from them.
+  reachableInGrass = (grassEntity, below: number[]): number[] => {
+    const blocked = new Set(grassEntity.getBlockedPositions());
+    const reached = new Set<number>();
+    for (const start of below) {
+      if (blocked.has(start)) continue;
+      for (const step of [-1, 1]) {
+        for (let x = start; COLUMNS.includes(x) && !blocked.has(x); x += step) {
+          reached.add(x);
+        }
       }
     }
-    return clearPositions;
+    return COLUMNS.filter((x) => reached.has(x));
   };
 
   // Scene generators
@@ -274,6 +284,7 @@ export class CrossyGameMap extends GameMap {
 
     // Get the previous row info for coordination
     const previousRow = this.getRow(this.rowCount - 1);
+    const below = this.reachable;
 
     switch (rowKind) {
       case "grass":
@@ -285,10 +296,25 @@ export class CrossyGameMap extends GameMap {
           requiredClearPositions = previousRow.entity.getLilyPadPositions();
         }
 
-        this.grasses.items[this.grasses.count].generate(
+        const grass = this.grasses.items[this.grasses.count];
+        grass.generate(
           this.mapRowToObstacle(this.rowCount),
           requiredClearPositions
         );
+        // Never let the obstacles close the way: if no column can be reached,
+        // clear one straight above a reachable column.
+        if (this.rowCount < startingRow) {
+          this.reachable = COLUMNS; // behind the start: the walls stay closed
+        } else if (this.rowCount === startingRow) {
+          // the player starts in the middle of this row
+          this.reachable = this.reachableInGrass(grass, [0]);
+        } else {
+          this.reachable = this.reachableInGrass(grass, below);
+          if (this.reachable.length === 0 && below.length > 0) {
+            grass.removeObstacle(below[Math.floor(Math.random() * below.length)]);
+            this.reachable = this.reachableInGrass(grass, below);
+          }
+        }
         this.setRow(this.rowCount, {
           type: "grass",
           entity: this.grasses.items[this.grasses.count],
@@ -304,6 +330,7 @@ export class CrossyGameMap extends GameMap {
             entity: this.railRoads.items[this.railRoads.count],
           });
           this.railRoads.count++;
+          this.reachable = COLUMNS; // the player can walk along the track
         } else {
           this.roads.items[this.roads.count].position.z = this.rowCount;
 
@@ -317,19 +344,25 @@ export class CrossyGameMap extends GameMap {
             entity: this.roads.items[this.roads.count],
           });
           this.roads.count++;
+          this.reachable = COLUMNS; // the player can walk along the road
         }
         break;
       case "water":
         this.water.items[this.water.count].position.z = this.rowCount;
         this.water.items[this.water.count].active = true;
 
-        // If previous row is grass, get clear positions so lily pads are accessible
-        let clearPositions: number[] = [];
-        if (previousRow && previousRow.type === "grass") {
-          clearPositions = this.getClearPositionsFromGrass(previousRow.entity);
+        // At least one lily pad must be reachable from the row below.
+        const water = this.water.items[this.water.count];
+        water.generate(below);
+        if (water.isStaticRow(this.rowCount)) {
+          // lily pads cannot be left sideways: only those above a reachable
+          // column count
+          this.reachable = water
+            .getLilyPadPositions()
+            .filter((x) => below.includes(x));
+        } else {
+          this.reachable = COLUMNS; // drifting boats pass every column
         }
-
-        this.water.items[this.water.count].generate(clearPositions);
         this.setRow(this.rowCount, {
           type: "water",
           entity: this.water.items[this.water.count],
@@ -342,6 +375,7 @@ export class CrossyGameMap extends GameMap {
   };
 
   reset() {
+    this.reachable = COLUMNS;
     this.grasses.count = 0;
     this.water.count = 0;
     this.roads.count = 0;
