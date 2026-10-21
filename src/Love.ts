@@ -132,28 +132,58 @@ function vinylRow(tiles: number): Box[] {
 export const vinylRows = () =>
   [1, 2, 3, 4].map((t) => voxelModel(vinylRow(t), { castShadow: true, receiveShadow: true }));
 
-// Pink heart-shaped floats (replace the lily pads).
-function heartFloat(): Box[] {
+// A phone floating on the water with its wired earbuds plugged in (replace
+// the lily pads). The screen plays a song; the cable runs to two earbuds.
+function phoneWithEarbuds(): Box[] {
+  const W = 0xfafafa;
   return [
-    ...flatText("♥", 0, 0, 1, HOT_PINK, 1.8, 1),
-    ...flatText("♥", 0, 1, 1, LIGHT_PINK, 1.2, 0.3),
+    [-3.5, 0, -6, 7, 1, 12, 0x1c1c1e], // phone
+    [-3, 1, -5.3, 6, 0.05, 10.4, 0x3949ab], // screen
+    [-2.2, 1.05, -1, 4.4, 0.05, 4.4, PINK], // album art
+    [-2.2, 1.05, -3, 4.4, 0.05, 0.4, WHITE], // progress bar
+    [-2.2, 1.06, -3, 2.2, 0.05, 0.4, HOT_PINK],
+    [-0.6, 1.05, -4.6, 1.2, 0.05, 1, WHITE], // play button
+    [-0.3, 0, 6, 0.6, 0.8, 0.8, W], // jack
+    [-0.2, 0.2, 6.8, 0.4, 0.4, 0.8, W], // cable
+    [-3.2, 0.2, 7.4, 6.4, 0.4, 0.4, W], // splits in two
+    [-3.6, 0.2, 2, 0.4, 0.4, 5.8, W],
+    [3.2, 0.2, 2, 0.4, 0.4, 5.8, W],
+    [-5.6, 0.2, 2, 2.4, 0.4, 0.4, W],
+    [3.2, 0.2, -1, 0.4, 0.4, 3.4, W],
+    [-6.6, 0, 0.5, 1.2, 0.6, 3, W], // left earbud: stem and bud
+    [-7.2, 0, -0.8, 2, 1.6, 2, W],
+    [2.8, 0, -3.8, 1.2, 0.6, 3, W], // right earbud
+    [2.4, 0, -5.4, 2, 1.6, 2, W],
+    [-6.8, 0.6, -0.4, 1, 1.1, 1.1, 0xbdbdbd], // speaker mesh
+    [2.8, 0.6, -5, 1, 1.1, 1.1, 0xbdbdbd],
   ];
 }
 
-export const heartFloats = () => [voxelModel(heartFloat(), { castShadow: true, receiveShadow: true })];
+export const phoneFloats = () => [voxelModel(phoneWithEarbuds(), { castShadow: true, receiveShadow: true })];
 
 // ---------- Decor (replaces the trees) ----------
 
-// Street lamp topped with a neon heart, lit on both sides.
-function heartLamp(): Box[] {
-  const heart = wallText("♥", 0, 20, -0.6, HOT_PINK, 1.3, 1.2);
-  return [
-    [-2, 0, -2, 4, 1.5, 4, 0x4a4a5a],
-    [-0.5, 1.5, -0.5, 1, 14, 1, 0x4a4a5a],
-    [-2.5, 15, -0.6, 5, 0.6, 1.2, 0x4a4a5a],
-    ...heart,
-    ...flipZ(heart),
+// Tall glass of iced matcha latte: milk at the bottom, green matcha poured
+// on top, ice cubes and a straw. The glass shows as light edges.
+function matchaGlass(): Box[] {
+  const glass = 0xe1f5fe;
+  const boxes: Box[] = [
+    [-4.5, 0, -4.5, 9, 1, 9, glass], // thick glass bottom
+    [-4, 1, -4, 8, 5, 8, 0xf7f3e8], // milk
+    [-4, 6, -4, 8, 1.5, 8, 0xd7e7b5], // where they mix
+    [-4, 7.5, -4, 8, 5, 8, 0x8bc34a], // matcha
+    [-4, 12.5, -4, 8, 0.5, 8, 0x9ccc65], // foam on top
+    [-3, 12.5, -2.5, 2.5, 2.5, 2.5, 0xe0f7fa], // ice cubes
+    [0.8, 12.6, 0.5, 2.5, 2.5, 2.5, 0xe0f7fa],
+    [-1, 12.2, -3.8, 2.2, 2.2, 0.6, 0xe0f7fa],
+    [1, 12, -1, 1, 9, 1, 0x2e7d32], // straw
+    [1, 20, -1, 3, 1, 1, 0x2e7d32],
+    [-4.6, 14.2, -4.6, 9.2, 0.6, 9.2, glass], // rim
   ];
+  for (const [x, z] of [[-4.6, -4.6], [4, -4.6], [-4.6, 4], [4, 4]]) {
+    boxes.push([x, 1, z, 0.6, 13.2, 0.6, glass]); // glass edges
+  }
+  return boxes;
 }
 
 // Pile of record sleeves with a vinyl sticking out, and on top one of
@@ -204,17 +234,27 @@ function blond(): Box[] {
   ];
 }
 
-// Retro microphone on a tall stand, like in jazz clubs.
-function micStand(): Box[] {
-  return [
-    [-3, 0, -3, 6, 0.6, 6, 0x333333], // base
-    [-0.4, 0.6, -0.4, 0.8, 15, 0.8, 0x9e9e9e],
-    [-1.4, 15, -1.6, 2.8, 4.5, 2.8, 0xcfd8dc], // grille
-    [-1.6, 16.5, -1.8, 3.2, 0.6, 3.2, 0x90a4ae],
-    [-1.6, 18, -1.8, 3.2, 0.6, 3.2, 0x90a4ae],
-    [-1.1, 19.5, -1.3, 2.2, 0.8, 2.2, 0xcfd8dc],
-    [-0.6, 14, -1.2, 1.2, 1.2, 1.2, GOLD], // clip
+// Giant microphone standing on end: black handle, silver ball grille with
+// its mesh, and the cable curling on the ground.
+function microphone(): Box[] {
+  const silver = 0xcfd8dc;
+  const boxes: Box[] = [
+    [-3, 0, -3, 6, 1, 6, 0x333333], // base
+    [-1.2, 1, -1.2, 2.4, 3, 2.4, 0x212121], // handle, wider towards the top
+    [-1.5, 4, -1.5, 3, 4, 3, 0x212121],
+    [-1.8, 8, -1.8, 3.6, 3, 3.6, 0x212121],
+    [-1.9, 10.5, -1.9, 3.8, 0.8, 3.8, 0x9e9e9e], // silver band
+    [-2.6, 11.3, -2.2, 5.2, 4.4, 4.4, silver], // ball grille
+    [-2.2, 11.3, -2.6, 4.4, 4.4, 5.2, silver],
+    [-2.2, 10.9, -2.2, 4.4, 5.2, 4.4, silver],
+    [-0.7, 2, -1.3, 1.4, 0.8, 0.1, 0x9e9e9e], // on/off switch
+    [-3, 0, 3, 6, 0.6, 0.8, 0x111111], // cable on the ground
+    [2.4, 0, -1, 0.8, 0.6, 4, 0x111111],
   ];
+  for (const y of [12, 13.2, 14.4]) {
+    boxes.push([-2.65, y, -2.25, 5.3, 0.3, 4.5, 0x90a4ae]); // mesh lines
+  }
+  return boxes;
 }
 
 // Electric guitar standing on its stand: cherry body, white pickguard,
@@ -245,7 +285,7 @@ function guitar(): Box[] {
   return boxes;
 }
 
-export const loveTrees = () => [heartLamp(), recordPile(channelOrange()), recordPile(blond()), micStand(), guitar()].map((b) => voxelModel(b));
+export const loveTrees = () => [matchaGlass(), recordPile(channelOrange()), recordPile(blond()), microphone(), guitar()].map((b) => voxelModel(b));
 
 // ---------- Obstacles (replace the boulders) ----------
 
