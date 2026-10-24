@@ -100,7 +100,8 @@ export function useCode(hash: string, reward: { coins?: number; skin?: SkinId })
       : state.unlocked;
   state = {
     ...state,
-    coins: state.coins + (reward.coins ?? 0),
+    // a code can also take coins away, never below zero
+    coins: Math.max(0, state.coins + (reward.coins ?? 0)),
     unlocked,
     selected: reward.skin ?? state.selected,
     usedCodes: [...state.usedCodes, hash],

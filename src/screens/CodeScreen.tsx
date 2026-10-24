@@ -18,7 +18,9 @@ export default function CodeScreen({ onClose }) {
   const submit = () => {
     if (!code.trim()) return;
     const result = redeemCode(code);
-    if ("coins" in result) {
+    if ("coins" in result && result.coins < 0) {
+      setMessage({ text: `Aie ! ${-result.coins} pieces perdues`, good: false });
+    } else if ("coins" in result) {
       setMessage({ text: `Bravo ! ${result.coins} pieces gagnees`, good: true });
     } else if ("skin" in result) {
       setCharacter(result.skin.id);

@@ -31,6 +31,7 @@ const CODES: Record<string, CodeReward> = {
   "1z89cvtiun": { coins: 10 },
   "1mxpkh2bt7t": { randomSkin: true },
   n4cr7b6dpx: { coins: 999 },
+  "2a1fa0tyxav": { coins: -30 }, // a trap: takes coins away
 };
 
 export type CodeResult =

@@ -21,6 +21,9 @@ describe("codes secrets", () => {
     expect(redeemCode("nora")).toEqual({ ok: false, reason: "used" });
     expect(redeemCode("paris")).toEqual({ ok: false, reason: "invalid" });
     expect(getWallet().coins).toBe(1129);
+    expect(redeemCode("Malone")).toEqual({ ok: true, coins: -30 });
+    expect(redeemCode("MALONE")).toEqual({ ok: false, reason: "used" });
+    expect(getWallet().coins).toBe(1099);
   });
 
   test("irina donne un skin aleatoire, jamais le secret", () => {
@@ -33,5 +36,16 @@ describe("codes secrets", () => {
     expect(getWallet().selected).toBe(r.skin.id);
     expect(redeemCode("irina")).toEqual({ ok: false, reason: "used" });
     expect(JSON.stringify(getWallet())).not.toContain("irina");
+  });
+});
+
+describe("code malone avec peu de pieces", () => {
+  test("le solde ne descend pas sous zero", async () => {
+    const { useCode } = await import("../src/Wallet");
+    const { codeHash } = await import("../src/SecretCodes");
+    // spend everything, then use the trap code on a fresh hash
+    useCode("test-drain", { coins: -100000 });
+    expect(getWallet().coins).toBe(0);
+    expect(codeHash("malone")).toBe("2a1fa0tyxav");
   });
 });
